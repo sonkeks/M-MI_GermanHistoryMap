@@ -1,3 +1,18 @@
 #root {
+}
 
+.layout {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 100vw;
+    z-index: 1000;
+}
+
+#top-controls {
+    top: 1rem;
+}
+
+#bottom-controls {
+    bottom: 1rem;
 }
