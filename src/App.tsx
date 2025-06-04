@@ -1,8 +1,11 @@
 import './App.css'
+import MapView from "./components/MapView.tsx";
 
 function App() {
   return (
-    <div>App</div>
+    <div>
+      <MapView />
+    </div>
   )
 }
 
