@@ -1,4 +1,14 @@
-import type {HistoricEvent} from "@/components/types.ts";
+import type {HistoricEvent, HistoricEventCollection} from "@/components/types.ts";
+
+export const collection: HistoricEventCollection[] = [
+  {
+    title: "World War I",
+    description: "Description",
+    startDate: new Date(),
+    endDate: new Date(),
+    historicEvents: ["wd:Q3927614", "wd:Q36756", "wd:Q150812", "wd:Q152120", "wd:Q38789", "wd:Q36749", "wd:Q152142"]
+  }
+]
 
 export const historicEvents: HistoricEvent[] = [
   {
@@ -27,9 +37,9 @@ export const historicEvents: HistoricEvent[] = [
     year: "1919"
   },
   {
-    label: "Reunification of Germany",
-    id: "wd:Q56039",
-    year: "1990"
+    label: "World War I",
+    id: "wd:Q361",
+    year: "1914"
   }
 ]
 
