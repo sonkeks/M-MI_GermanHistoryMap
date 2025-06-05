@@ -1,6 +1,8 @@
-import type {FunctionComponent} from "react";
-import {Box, Slider} from "@chakra-ui/react";
+import {type FunctionComponent, useContext} from "react";
+import {Box, Button, Flex, Menu, Portal, Slider} from "@chakra-ui/react";
 import "./Header.css";
+import {EventContext} from "@/components/EventContext.tsx";
+import {historicEvents} from "@/components/data.ts";
 
 export const Header: FunctionComponent = () => {
   const marks = [
@@ -17,8 +19,41 @@ export const Header: FunctionComponent = () => {
     { value: 100, label: "2020" },
   ];
   
+  const { state, dispatch } = useContext(EventContext);
+  
+  const handleSelect = (eventId: string) => {
+    dispatch({ type: "SELECT_EVENT", payload: {eventId: eventId}})
+  }
+  
   return (
-    <>
+    <Flex className="layout top-controls">
+      <Menu.Root
+        closeOnSelect
+        highlightedValue={state.selectedEvent?.id}
+      >
+        <Menu.Trigger asChild>
+          <Button size="md">
+            Select Event
+          </Button>
+        </Menu.Trigger>
+        <Portal>
+          <Menu.Positioner>
+            <Menu.Content>
+              {historicEvents.map(
+                historicEvent => (
+                  <Menu.Item
+                    onClick={() => handleSelect(historicEvent.id)}
+                    key={historicEvent.id}
+                    value={historicEvent.id}
+                  >
+                    {historicEvent.label}
+                  </Menu.Item>
+                )
+              )}
+            </Menu.Content>
+          </Menu.Positioner>
+        </Portal>
+      </Menu.Root>
       <Box className="slider-box" bg="white">
         <Slider.Root size={"lg"} width="600px" step={10}>
           <Slider.Label>Period</Slider.Label>
@@ -31,9 +66,6 @@ export const Header: FunctionComponent = () => {
           </Slider.Control>
         </Slider.Root>
       </Box>
-      <Box>
-      
-      </Box>
-    </>
+    </Flex>
   )
 }
