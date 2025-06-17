@@ -1,5 +1,5 @@
 import {type FunctionComponent, useContext, useEffect, useState} from "react";
-import {Box, Input, InputGroup, Tabs} from "@chakra-ui/react";
+import {Box, Flex, Input, InputGroup, Tabs} from "@chakra-ui/react";
 import {TbBooks, TbCalendarMonth, TbCategory, TbSearch} from "react-icons/tb";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import "./SearchLayout.css";
@@ -53,7 +53,7 @@ export const SearchLayout: FunctionComponent = () => {
   }
   
   return (
-    <Box>
+    <Flex direction="column" height="100vh">
       <InputGroup startElement={<TbSearch size={16} />} w="full" className="search-bar">
         <Input flex="1" size="lg" placeholder={getPlaceholder()} value={searchValue} onChange={(e) => setSearchValue(e.currentTarget.value)} />
       </InputGroup>
@@ -73,7 +73,9 @@ export const SearchLayout: FunctionComponent = () => {
           </Tabs.Trigger>
         </Tabs.List>
       </Tabs.Root>
-      <Outlet />
-    </Box>
+      <Box className="scrollable-container">
+        <Outlet />
+      </Box>
+    </Flex>
   )
 }
