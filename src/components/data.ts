@@ -1,13 +1,14 @@
 import type {HistoricEvent, HistoricCollection} from "@/components/types.ts";
 
-export const collections: HistoricCollection[] = [
+export const historicCollections: HistoricCollection[] = [
   {
     id: "wwi",
     title: "World War I",
     description: "Description",
     startDate: new Date(),
     endDate: new Date(),
-    historicEvents: ["wd:Q3927614", "wd:Q36756", "wd:Q150812", "wd:Q152120", "wd:Q38789", "wd:Q36749", "wd:Q152142"]
+    historicEvents: [],
+    wikiTitle: "World_War_I"
   },
   {
     id: "wwii",
@@ -15,7 +16,8 @@ export const collections: HistoricCollection[] = [
     description: "Description",
     startDate: new Date(),
     endDate: new Date(),
-    historicEvents: []
+    historicEvents: ["wd:Q3927614", "wd:Q36756", "wd:Q150812", "wd:Q152120", "wd:Q38789", "wd:Q152142"],
+    wikiTitle: "World_War_II"
   },
   {
     id: "cold-war",
@@ -23,7 +25,8 @@ export const collections: HistoricCollection[] = [
     description: "Description",
     startDate: new Date(),
     endDate: new Date(),
-    historicEvents: []
+    historicEvents: [],
+    wikiTitle: "Cold_War"
   }
 ]
 
@@ -47,22 +50,40 @@ export const historicEvents: HistoricEvent[] = [
     wikiTitle: "Fall_of_the_Berlin_Wall"
   },
   {
-    label: "German Revolution of 1918–1919",
-    id: "wd:Q170306",
-    year: "1918–1919",
-    wikiTitle: ""
-  },
-  {
     label: "Treaty of Versailles",
     id: "wd:Q8736",
     year: "1919",
     wikiTitle: "Treaty_of_Versailles"
   },
   {
-    label: "World War I",
-    id: "wd:Q361",
-    year: "1914",
-    wikiTitle: ""
+    label: "Kristallnacht",
+    id: "wd:Q36756",
+    year: "1938",
+    wikiTitle: "Kristallnacht"
+  },
+  {
+    label: "Invasion of Poland",
+    id: "wd:Q150812",
+    year: "1939",
+    wikiTitle: "Invasion_of_Poland"
+  },
+  {
+    label: "Battle of Stalingrad",
+    id: "wd:Q38789",
+    year: "1942",
+    wikiTitle: "Battle_of_Stalingrad"
+  },
+  {
+    label: "Bombing of Dresden",
+    id: "wd:Q152142",
+    year: "1945",
+    wikiTitle: "Bombing_of_Dresden"
+  },
+  {
+    label: "Wannsee Conference",
+    id: "wd:Q152120",
+    year: "1942",
+    wikiTitle: "Wannsee_Conference"
   }
 ]
 

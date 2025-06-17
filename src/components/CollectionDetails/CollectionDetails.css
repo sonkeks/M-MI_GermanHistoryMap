@@ -1,0 +1,13 @@
+.collections-navigation-bar {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    position: fixed;
+    background-color: white;
+    z-index: 1000;
+    border-bottom: #e5e7eb solid 1px;
+}
+
+.timeline-controls {
+    margin-bottom: 15px;
+}

@@ -1,18 +1,20 @@
 import type {EventLocation, HistoricEvent} from "@/components/types.ts";
 import type {LatLngTuple} from "leaflet";
 
-function buildDetailsQuery(id: HistoricEvent['id']): string {
+function buildDetailsQuery(ids: HistoricEvent['id'][]): string {
+  const values = ids.join(' ');
   return `
-    SELECT ?event ?eventLabel ?eventDescription
+    SELECT ?event (CONCAT("wd:", REPLACE(STR(?event), "^.*Q", "Q")) AS ?eventId) ?eventLabel ?eventDescription
            ?startDate ?endDate
            ?location ?locationLabel ?coordinate ?image
-           ?eventArticle
+           ?eventArticle ?eventImage
     WHERE {
-      VALUES ?event { ${id} }
+      VALUES ?event { ${values} }
 
       OPTIONAL { ?event wdt:P585 ?startDate. }       # point in time
       OPTIONAL { ?event wdt:P582 ?endDate. }         # end date
       OPTIONAL { ?event wdt:P276 ?location. }        # location
+      OPTIONAL { ?event wdt:P18 ?eventImage. }       # image of the event
       OPTIONAL { ?location wdt:P625 ?coordinate. }   # coordinate location
       OPTIONAL { ?location wdt:P18 ?image. }         # image of the location
 
@@ -44,8 +46,8 @@ async function fetchWikidataSPARQL(query: string): Promise<EventLocation[]> {
   return data.results.bindings;
 }
 
-export async function getEventData(id: HistoricEvent['id']) {
-  const query = buildDetailsQuery(id);
+export async function getEventsData(ids: HistoricEvent['id'][]) {
+  const query = buildDetailsQuery(ids);
   return fetchWikidataSPARQL(query);
 }
 

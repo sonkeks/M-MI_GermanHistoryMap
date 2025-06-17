@@ -5,13 +5,13 @@ import {Link, useLocation, useParams} from "react-router-dom";
 import {historicEvents} from "@/components/data.ts";
 import {MapContext} from "@/components/MapContext.tsx";
 import {TbChevronLeft, TbChevronRight, TbExternalLink} from "react-icons/tb";
-import {useGetEventDetails} from "@/hooks/useGetEventDetails.ts";
+import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
 
 export const EventDetails: FunctionComponent = () => {
-  const {eventId} = useParams();
+  const { eventId } = useParams();
   const { eventLocations, dispatch } = useContext(MapContext);
   const location = useLocation();
-  const {eventDetails, loading} = useGetEventDetails(eventId!);
+  const {details, loading} = useGetWikiDetails(eventId!, 'EVENT');
   
   const historicEvent = historicEvents.find(item => item.id === eventId);
   
@@ -23,25 +23,25 @@ export const EventDetails: FunctionComponent = () => {
   
   return (
     <Box>
-      <Flex className="navigation-bar" alignItems="center" justifyContent="space-between">
+      <Flex className="event-navigation-bar" alignItems="center" justifyContent="space-between">
         <Link to={`/events${location.search}`} replace className="back-link" onClick={() => dispatch({type: 'CLEAR_EVENT'})}>
           <TbChevronLeft size={20}/>
           Events
         </Link>
-        {eventDetails?.content_urls && (
-          <ChakraLink href={eventDetails.content_urls.desktop.page} target="_blank">
+        {details?.content_urls && (
+          <ChakraLink href={details.content_urls.desktop.page} target="_blank">
             Read More
             <TbExternalLink />
           </ChakraLink>
         )}
       </Flex>
       <Box className="navigation-bar-spacing"></Box>
-      {!loading && eventDetails && (
+      {!loading && details && (
         <>
-          <img className="header-image" src={eventDetails?.thumbnail?.source} alt={`Image of ${eventDetails?.title}`}/>
+          <img className="header-image" src={details?.thumbnail?.source} alt={`Image of ${details?.title}`}/>
           <Stack className="container">
-            <Heading>{eventDetails?.title}</Heading>
-            <Text textStyle="sm">{eventDetails?.extract}</Text>
+            <Heading>{details?.title}</Heading>
+            <Text textStyle="sm">{details?.extract}</Text>
           </Stack>
         </>
       )}

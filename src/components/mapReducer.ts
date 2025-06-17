@@ -1,5 +1,5 @@
 import type {HistoricCollection, HistoricEvent} from "@/components/types.ts";
-import {collections, historicEvents} from "@/components/data.ts";
+import {historicCollections, historicEvents} from "@/components/data.ts";
 
 export type MapAction =
   | { type: "SELECT_EVENT"; payload: { eventId: string } }
@@ -29,7 +29,7 @@ export function mapReducer(state: MapState, action: MapAction): MapState {
     case "CLEAR_EVENT":
       return { ...state, selectedEvent: null };
     case "SELECT_COLLECTION": {
-      const selectedCollection = collections.find(collection => collection.id === action.payload.collectionId) || null;
+      const selectedCollection = historicCollections.find(collection => collection.id === action.payload.collectionId) || null;
       return { ...state, selectedEvent: null, selectedCollection: selectedCollection}
     }
     case "CLEAR_COLLECTION": {

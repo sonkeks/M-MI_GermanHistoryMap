@@ -1,6 +1,6 @@
 import type {EventLocation, HistoricEvent} from "@/components/types.ts";
 import {useEffect, useState} from "react";
-import {getEventData} from "@/services/EventsService.ts";
+import {getEventsData} from "@/services/EventsService.ts";
 
 export function useGetEventLocations () {
   const [eventLocations, setEventLocations] = useState<EventLocation[]>([]);
@@ -12,7 +12,7 @@ export function useGetEventLocations () {
     async function loadData() {
       if (selectedId) {
         try {
-          const results: EventLocation[] = await getEventData(selectedId);
+          const results: EventLocation[] = await getEventsData([selectedId]);
           console.log(results);
           setEventLocations(results);
         } catch (err: any) {
