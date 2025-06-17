@@ -1,54 +1,32 @@
-import type {HistoricEvent} from "@/components/types.ts";
+import type {EventLocation, HistoricEvent} from "@/components/types.ts";
 import type {LatLngTuple} from "leaflet";
 
-export type EventDetails = {
-  event: {
-    type: "uri";
-    value: string;
-  };
-  endDate: {
-    datatype: string;
-    type: "literal";
-    value: string;
-  };
-  coordinate: {
-    datatype: string;
-    type: "literal";
-    value: "string";
-  };
-  eventLabel: {
-    "xml:lang": string;
-    type: "literal";
-    value: string;
-  };
-  eventDescription: {
-    "xml:lang": string;
-    type: "literal";
-    value: string;
-  };
-  locationLabel: {
-    "xml:lang": string;
-    type: "literal";
-    value: string;
-  };
-}
-
-function buildQuery(id: HistoricEvent['id']): string {
+function buildDetailsQuery(id: HistoricEvent['id']): string {
   return `
-    SELECT ?event ?eventLabel ?eventDescription ?startDate ?endDate ?locationLabel ?coordinate WHERE {
+    SELECT ?event ?eventLabel ?eventDescription
+           ?startDate ?endDate
+           ?location ?locationLabel ?coordinate ?image
+           ?eventArticle
+    WHERE {
       VALUES ?event { ${id} }
-    
-      OPTIONAL { ?event wdt:P585 ?startDate. }      # point in time
-      OPTIONAL { ?event wdt:P582 ?endDate. }        # end date
-      OPTIONAL { ?event wdt:P276 ?location. }       # location
-      OPTIONAL { ?location wdt:P625 ?coordinate. }  # coordinate location of the location
-    
+
+      OPTIONAL { ?event wdt:P585 ?startDate. }       # point in time
+      OPTIONAL { ?event wdt:P582 ?endDate. }         # end date
+      OPTIONAL { ?event wdt:P276 ?location. }        # location
+      OPTIONAL { ?location wdt:P625 ?coordinate. }   # coordinate location
+      OPTIONAL { ?location wdt:P18 ?image. }         # image of the location
+
+      OPTIONAL {
+        ?eventArticle schema:about ?event ;
+                      schema:isPartOf <https://en.wikipedia.org/> .
+      }
+
       SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
     }
   `;
 }
 
-async function fetchWikidataSPARQL(query: string): Promise<EventDetails[]> {
+async function fetchWikidataSPARQL(query: string): Promise<EventLocation[]> {
   const response = await fetch("https://query.wikidata.org/sparql", {
     method: "POST",
     headers: {
@@ -67,7 +45,7 @@ async function fetchWikidataSPARQL(query: string): Promise<EventDetails[]> {
 }
 
 export async function getEventData(id: HistoricEvent['id']) {
-  const query = buildQuery(id);
+  const query = buildDetailsQuery(id);
   return fetchWikidataSPARQL(query);
 }
 
