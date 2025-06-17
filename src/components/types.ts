@@ -4,10 +4,13 @@ export type HistoricEvent = {
   year: string;
 }
 
-export type HistoricEventCollection = {
+export type HistoricCollection = {
+  id: string,
   title: string,
   description: string,
   startDate: Date,
   endDate: Date,
   historicEvents: HistoricEvent['id'][]
 }
+
+export type Category = 'EVENTS' | 'COLLECTIONS' | 'ALL';

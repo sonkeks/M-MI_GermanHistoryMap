@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leafl
 import 'leaflet/dist/leaflet.css';
 import type {LatLngTuple} from "leaflet";
 import {useGetEventData} from "@/hooks/useGetEventData.ts";
-import {EventContext} from "@/components/EventContext.tsx";
+import {MapContext} from "@/components/MapContext.tsx";
 import {useContext, useEffect} from "react";
 import {pointStringToLatLngTuple} from "@/services/EventsService.ts";
 import {Heading, HStack, Stack, Text} from "@chakra-ui/react";
@@ -35,7 +35,7 @@ const MAP_STYLES = {
 
 const MapView = () => {
   const {data, loading, updateSelection} = useGetEventData();
-  const {state} = useContext(EventContext);
+  const {state} = useContext(MapContext);
   
   useEffect(() => {
     updateSelection(state.selectedEvent?.id || null);

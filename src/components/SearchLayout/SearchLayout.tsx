@@ -1,13 +1,16 @@
-import {type FunctionComponent, useEffect, useState} from "react";
-import {Box, Group, IconButton, Input, Tabs} from "@chakra-ui/react";
+import {type FunctionComponent, useContext, useEffect, useState} from "react";
+import {Box, Input, InputGroup, Tabs} from "@chakra-ui/react";
 import {TbBooks, TbCalendarMonth, TbCategory, TbSearch} from "react-icons/tb";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import "./SearchLayout.css";
-
-type Category = 'EVENTS' | 'COLLECTIONS' | 'ALL';
+import {MapContext} from "@/components/MapContext.tsx";
+import {useSearch} from "@/hooks/useSearch.ts";
+import type {Category} from "@/components/types.ts";
+import {buildUrlForCategory} from "@/utility/routingHelpers.ts";
 
 export const SearchLayout: FunctionComponent = () => {
-  const [searchValue, setSearchValue] = useState<string>("");
+  const {state} = useContext(MapContext);
+  const {searchValue, setSearchValue} = useSearch();
   const [category, setCategory] = useState<Category>('ALL');
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,30 +28,35 @@ export const SearchLayout: FunctionComponent = () => {
   
   const handleCategorySelect = (e: any) => {
     setCategory(e.value);
-    switch (e.value as Category) {
-      case "ALL": {
-        navigate("/");
-        break;
+    let search = location.search;
+    
+    if (!search || !new URLSearchParams(search).get('q')) {
+      const query = state.currentSearchQuery;
+      if (query) {
+        search = `?q=${encodeURIComponent(query)}`;
       }
-      case "COLLECTIONS": {
-        navigate("/collections");
-        break;
-      }
-      case "EVENTS": {
-        navigate("/events");
-        break;
-      }
+    }
+    
+    const basePath = buildUrlForCategory(e.value, state);
+    navigate(`${basePath}${search}`);
+  }
+  
+  const getPlaceholder = () => {
+    switch (category) {
+      case "ALL":
+        return "Search for anything"
+      case "EVENTS":
+        return "Search for an Event"
+      case "COLLECTIONS":
+        return "Search for a Collection"
     }
   }
   
   return (
     <Box>
-      <Group className="search-bar" attached w="full">
-        <Input size="lg" flex="1" placeholder="Search for an Event" value={searchValue} onChange={(e) => setSearchValue(e.currentTarget.value)} />
-        <IconButton size="lg" bg="bg.subtle" variant="outline">
-          <TbSearch />
-        </IconButton>
-      </Group>
+      <InputGroup startElement={<TbSearch size={16} />} w="full" className="search-bar">
+        <Input flex="1" size="lg" placeholder={getPlaceholder()} value={searchValue} onChange={(e) => setSearchValue(e.currentTarget.value)} />
+      </InputGroup>
       <Tabs.Root variant="line" value={category} onValueChange={(e) => handleCategorySelect(e)}>
         <Tabs.List>
           <Tabs.Trigger value="ALL">

@@ -1,7 +1,8 @@
-import type {HistoricEvent, HistoricEventCollection} from "@/components/types.ts";
+import type {HistoricEvent, HistoricCollection} from "@/components/types.ts";
 
-export const collection: HistoricEventCollection[] = [
+export const collections: HistoricCollection[] = [
   {
+    id: "wwi",
     title: "World War I",
     description: "Description",
     startDate: new Date(),

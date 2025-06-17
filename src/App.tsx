@@ -1,6 +1,6 @@
 import './App.css'
 import MapView from "./components/MapView.tsx";
-import {EventProvider} from "@/components/EventContext.tsx";
+import {EventProvider} from "@/components/MapContext.tsx";
 import {SideMenu} from "@/components/SideMenu.tsx";
 import {Layout} from "@/components/Layout/Layout.tsx";
 
