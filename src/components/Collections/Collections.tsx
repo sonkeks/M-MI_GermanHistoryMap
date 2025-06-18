@@ -1,14 +1,12 @@
-import {type FunctionComponent, useContext, useEffect, useState} from "react";
+import {type FunctionComponent, useEffect, useState} from "react";
 import {Button, Card, Flex} from "@chakra-ui/react";
 import "./Collections.css";
 import {useSearch} from "@/hooks/useSearch.ts";
-import {MapContext} from "@/components/MapContext.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import type {HistoricCollection} from "@/components/types.ts";
 import {historicCollections} from "@/components/data.ts";
 
 export const Collections: FunctionComponent = () => {
-  const {dispatch} = useContext(MapContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [collections, setCollections] = useState<HistoricCollection[]>([]);
@@ -23,7 +21,6 @@ export const Collections: FunctionComponent = () => {
   }, [searchValue]);
   
   const handleCollectionSelect = (collectionId: string) => {
-    dispatch({ type: "SELECT_COLLECTION", payload: {collectionId: collectionId}});
     navigate(`/collections/${collectionId}${location.search}`);
   }
   

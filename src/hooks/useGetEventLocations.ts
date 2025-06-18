@@ -30,5 +30,5 @@ export function useGetEventLocations () {
     setSelectedId(id);
   }
   
-  return { eventLocations, loading, error, updateSelection };
+  return { eventLocations, loadingEvent: loading, error, updateSelection };
 }

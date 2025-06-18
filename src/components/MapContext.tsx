@@ -9,7 +9,8 @@ interface MapContextProps {
   dispatch: React.Dispatch<MapAction>;
   eventLocations: EventLocation[],
   eventRecords: RestructuredEvent[],
-  loading: boolean,
+  loadingEvent: boolean,
+  loadingEventRecords: boolean,
 }
 
 export const MapContext = createContext<MapContextProps>({
@@ -17,13 +18,14 @@ export const MapContext = createContext<MapContextProps>({
   dispatch: () => {},
   eventLocations: [],
   eventRecords: [],
-  loading: false
+  loadingEvent: false,
+  loadingEventRecords: false,
 });
 
 export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(mapReducer, initialMapState);
-  const { eventLocations, loading, updateSelection } = useGetEventLocations();
-  const { eventRecords, updateSelections } = useGetEventRecords();
+  const { eventLocations, loadingEvent, updateSelection } = useGetEventLocations();
+  const { eventRecords, loadingEventRecords, updateSelections } = useGetEventRecords();
   
   useEffect(() => {
     updateSelections(state.selectedCollection?.historicEvents || null);
@@ -34,7 +36,7 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [state.selectedEvent])
   
   return (
-    <MapContext.Provider value={{ state, dispatch, eventLocations, eventRecords, loading }}>
+    <MapContext.Provider value={{ state, dispatch, eventLocations, eventRecords, loadingEvent, loadingEventRecords }}>
       {children}
     </MapContext.Provider>
   );

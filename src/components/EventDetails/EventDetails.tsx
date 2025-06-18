@@ -1,8 +1,7 @@
 import {type FunctionComponent, useContext, useEffect} from "react";
-import {Box, Flex, Heading, Text, Link as ChakraLink, Stack, Table} from "@chakra-ui/react";
+import {Box, Flex, Heading, Text, Link as ChakraLink, Stack, Table, Skeleton} from "@chakra-ui/react";
 import "./EventDetails.css";
 import {Link, useLocation, useParams} from "react-router-dom";
-import {historicEvents} from "@/components/data.ts";
 import {MapContext} from "@/components/MapContext.tsx";
 import {TbChevronLeft, TbChevronRight, TbExternalLink} from "react-icons/tb";
 import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
@@ -13,11 +12,9 @@ export const EventDetails: FunctionComponent = () => {
   const location = useLocation();
   const {details, loading} = useGetWikiDetails(eventId!, 'EVENT');
   
-  const historicEvent = historicEvents.find(item => item.id === eventId);
-  
   useEffect(() => {
-    if (historicEvent) {
-      dispatch({ type: "SELECT_EVENT", payload: {eventId: historicEvent.id}})
+    if (eventId) {
+      dispatch({ type: "SELECT_EVENT", payload: {eventId: eventId}})
     }
   }, []);
   
@@ -42,6 +39,17 @@ export const EventDetails: FunctionComponent = () => {
           <Stack className="container">
             <Heading>{details?.title}</Heading>
             <Text textStyle="sm">{details?.extract}</Text>
+          </Stack>
+        </>
+      )}
+      {loading && (
+        <>
+          <Skeleton className="header-image" height="300px"></Skeleton>
+          <Stack className="container">
+            <Skeleton height="8"></Skeleton>
+            <Skeleton height="3"></Skeleton>
+            <Skeleton height="3"></Skeleton>
+            <Skeleton height="3" width="50%" mb="150px"></Skeleton>
           </Stack>
         </>
       )}

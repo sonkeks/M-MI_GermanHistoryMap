@@ -11,9 +11,9 @@ import {
   HoverCard,
   Image,
   Portal,
-  Card
+  Card, Skeleton
 } from "@chakra-ui/react";
-import {type FunctionComponent, useContext, useRef, useState} from "react";
+import {type FunctionComponent, useContext, useEffect, useRef, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {TbChevronDown, TbChevronLeft, TbChevronUp, TbGitCommit, TbInfoCircle, TbList} from "react-icons/tb";
 import {MapContext} from "@/components/MapContext.tsx";
@@ -30,6 +30,12 @@ export const CollectionDetails: FunctionComponent = () => {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   
   const historicCollection = historicCollections.find(item => item.id === collectionId);
+  
+  useEffect(() => {
+    if (collectionId) {
+      dispatch({ type: "SELECT_COLLECTION", payload: {collectionId: collectionId}});
+    }
+  }, []);
   
   const sortedEvents = () => {
     return [...eventRecords].sort((a, b) => {
@@ -72,6 +78,17 @@ export const CollectionDetails: FunctionComponent = () => {
           <Stack className="container">
             <Heading>{details?.title}</Heading>
             <Text textStyle="sm">{details?.extract}</Text>
+          </Stack>
+        </>
+      )}
+      {loading && (
+        <>
+          <Skeleton className="header-image" height="300px"></Skeleton>
+          <Stack className="container">
+            <Skeleton height="8"></Skeleton>
+            <Skeleton height="3"></Skeleton>
+            <Skeleton height="3"></Skeleton>
+            <Skeleton height="3" width="50%" mb="150px"></Skeleton>
           </Stack>
         </>
       )}

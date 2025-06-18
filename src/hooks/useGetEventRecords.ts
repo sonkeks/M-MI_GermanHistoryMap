@@ -25,6 +25,8 @@ export function useGetEventRecords() {
         } finally {
           setLoading(false);
         }
+      } else {
+        setEventRecords([]);
       }
     }
     
@@ -35,5 +37,5 @@ export function useGetEventRecords() {
     setSelectedIds(ids ?? []);
   };
   
-  return { eventRecords, loading, error, updateSelections };
+  return { eventRecords, loadingEventRecords: loading, error, updateSelections };
 }
