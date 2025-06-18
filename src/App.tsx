@@ -1,12 +1,15 @@
 import './App.css'
 import MapView from "./components/MapView.tsx";
-import {EventProvider} from "@/components/EventContext.tsx";
-import {Header} from "@/components/Header.tsx";
+import {EventProvider} from "@/components/MapContext.tsx";
+import {SideMenu} from "@/components/SideMenu.tsx";
+import {Layout} from "@/components/Layout/Layout.tsx";
 
 function App() {
   return (
     <EventProvider>
-      <Header />
+      <Layout>
+        <SideMenu />
+      </Layout>
       <MapView />
     </EventProvider>
   )

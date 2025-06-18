@@ -1,10 +1,22 @@
 #root {
 }
 
-.top-controls {
-    top: 1rem;
+.container {
+    padding: 15px;
 }
 
-.bottom-controls {
-    bottom: 1rem;
+.back-link {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    width: fit-content;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+    text-decoration-color: #9ca3af;
+}
+
+.icon-cell {
+    width: 24px;
 }

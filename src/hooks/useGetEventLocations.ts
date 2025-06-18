@@ -1,9 +1,9 @@
-import type {HistoricEvent} from "@/components/types.ts";
+import type {EventLocation, HistoricEvent} from "@/components/types.ts";
 import {useEffect, useState} from "react";
-import {type EventDetails, getEventData} from "@/services/EventsService.ts";
+import {getEventsData} from "@/services/EventsService.ts";
 
-export function useGetEventData () {
-  const [data, setData] = useState<EventDetails[]>([]);
+export function useGetEventLocations () {
+  const [eventLocations, setEventLocations] = useState<EventLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [selectedId, setSelectedId] = useState<HistoricEvent['id'] | null>(null);
@@ -12,9 +12,9 @@ export function useGetEventData () {
     async function loadData() {
       if (selectedId) {
         try {
-          const results: EventDetails[] = await getEventData(selectedId);
+          const results: EventLocation[] = await getEventsData([selectedId]);
           console.log(results);
-          setData(results);
+          setEventLocations(results);
         } catch (err: any) {
           setError(err);
         } finally {
@@ -30,5 +30,5 @@ export function useGetEventData () {
     setSelectedId(id);
   }
   
-  return { data, loading, error, updateSelection };
+  return { eventLocations, loading, error, updateSelection };
 }

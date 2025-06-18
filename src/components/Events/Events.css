@@ -1,0 +1,5 @@
+.events-table-row {
+    &:hover {
+        cursor: pointer;
+    }
+}
