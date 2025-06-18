@@ -1,7 +1,8 @@
-import type {HistoricCollection, HistoricEvent} from "@/components/types.ts";
+import type {HistoricCollection, HistoricEvent, MapStyleKey} from "@/components/types.ts";
 import {historicCollections, historicEvents} from "@/components/data.ts";
 
 export type MapAction =
+  | { type: "SELECT_MAPSTYLE"; payload: { key: MapStyleKey }}
   | { type: "SELECT_EVENT"; payload: { eventId: string } }
   | { type: "CLEAR_EVENT" }
   | { type: "SELECT_COLLECTION"; payload: { collectionId: string }}
@@ -9,12 +10,14 @@ export type MapAction =
   | { type: 'SET_SEARCH_QUERY'; payload: string }
 
 export type MapState = {
+  mapStyle: MapStyleKey,
   currentSearchQuery: string;
   selectedEvent: HistoricEvent | null;
   selectedCollection: HistoricCollection | null;
 }
 
 export const initialMapState: MapState = {
+  mapStyle: 'satellite',
   currentSearchQuery: '',
   selectedEvent: null,
   selectedCollection: null
@@ -22,6 +25,9 @@ export const initialMapState: MapState = {
 
 export function mapReducer(state: MapState, action: MapAction): MapState {
   switch (action.type) {
+    case "SELECT_MAPSTYLE": {
+      return { ...state, mapStyle: action.payload.key }
+    }
     case "SELECT_EVENT": {
       const selectedEvent = historicEvents.find(item => item.id === action.payload.eventId) || null;
       return { ...state, selectedEvent: selectedEvent };

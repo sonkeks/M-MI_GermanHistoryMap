@@ -31,3 +31,20 @@
 .side-menu.closed {
     transform: translateX(-100%);
 }
+
+.map-image-container {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.map-style-image {
+    aspect-ratio: 1 / 1;
+    border-radius: 5px;
+    box-shadow: none;
+    transition: box-shadow 0.2s;
+}
+
+.map-style-image:hover {
+    box-shadow: #c4c4c5 0 2px 6px;
+    cursor: pointer;
+}
