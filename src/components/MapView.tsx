@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
+import {MapContainer, TileLayer, Popup, ZoomControl} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type {LatLngTuple} from "leaflet";
 import {MapContext} from "@/components/MapContext.tsx";
@@ -6,14 +6,29 @@ import {useContext} from "react";
 import {pointStringToLatLngTuple} from "@/services/EventsService.ts";
 import {Box, Heading, Stack, Text} from "@chakra-ui/react";
 import "./Mapview.css";
-import { MAP_STYLES } from './types';
+import {MAP_STYLES} from './types';
+import {CustomMarker} from "@/components/CustomMarker.tsx";
 
 
 const MapView = () => {
-  const {eventLocations, loading, state} = useContext(MapContext);
+  const {eventLocations, eventRecords, loadingEvent, loadingEventRecords, state} = useContext(MapContext);
   
   const center: LatLngTuple = [51.1657, 10.4515];
   const zoom = 6;
+  
+  const allEventLocations = eventRecords.flatMap(event =>
+    event.locations
+      .filter(location => location.coordinate)
+      .map(location => ({
+        ...location,
+        eventId: event.eventId,
+        eventLabel: event.eventLabel,
+        eventDescription: event.eventDescription
+      }))
+  )
+  
+  // Use CircleMarker with Number corresponding to the Timeline.
+  // Make Timeline follow a color palette that is applied to the markers.
   
   return (
     <MapContainer zoomControl={false} center={center} zoom={zoom} style={{ height: '100vh', width: '100%' }}>
@@ -22,9 +37,9 @@ const MapView = () => {
         attribution={MAP_STYLES[state.mapStyle].attribution}
       />
       <ZoomControl position='bottomright' />
-      {eventLocations && !loading && eventLocations.map((location, index) => {
+      {eventLocations && !loadingEvent && eventLocations.map((location, index) => {
         return (
-          <Marker key={index} position={pointStringToLatLngTuple(location.coordinate.value)}>
+          <CustomMarker key={index} position={pointStringToLatLngTuple(location.coordinate.value)}>
             <Popup className="custom-popup">
                 <Stack>
                   {location.image && location.image.type === 'uri'
@@ -42,9 +57,30 @@ const MapView = () => {
                   </Box>
                 </Stack>
             </Popup>
-          </Marker>
+          </CustomMarker>
         )
       })}
+      {eventRecords && !loadingEventRecords && allEventLocations.map((location, index) => (
+        <CustomMarker key={location.eventId + index} number={index + 1} position={pointStringToLatLngTuple(location.coordinate || "")}>
+          <Popup className="custom-popup">
+            <Stack>
+              {location.image
+                ? <img
+                  src={location.image + '?width=500'}
+                  alt={`Image of ${location.locationLabel}`}
+                  className="image-container"
+                />
+                : <div className="image-container image-placeholder"></div>
+              }
+              <Box className="popup-location-info-container">
+                <Heading mt="0" lineHeight="1" size="md">{location.locationLabel}</Heading>
+                <Text m="0!" color="gray.500" fontWeight="500">{location.eventLabel}</Text>
+                <Text mt="2!" textStyle="sm">{location.eventDescription}</Text>
+              </Box>
+            </Stack>
+          </Popup>
+        </CustomMarker>
+      ))}
     </MapContainer>
   );
 };

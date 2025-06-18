@@ -1,5 +1,6 @@
 .custom-popup {
     border: none !important;
+    margin-bottom: 45px;
 }
 
 .custom-popup > .leaflet-popup-content-wrapper {
