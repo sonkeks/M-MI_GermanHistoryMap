@@ -4,7 +4,7 @@ import './index.css'
 import 'leaflet/dist/leaflet.css';
 import App from './App.tsx'
 import {Provider} from "@/components/ui/provider.tsx";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {HashRouter, Route, Routes} from "react-router-dom";
 import {EventDetails} from "@/components/EventDetails/EventDetails.tsx";
 import {SearchLayout} from "@/components/SearchLayout/SearchLayout.tsx";
 import {Explore} from "@/components/Explore/Explore.tsx";
@@ -15,7 +15,7 @@ import {CollectionDetails} from "@/components/CollectionDetails/CollectionDetail
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="/" element={<App />}>
             <Route element={<SearchLayout />}>
@@ -27,7 +27,7 @@ createRoot(document.getElementById('root')!).render(
             </Route>
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </Provider>
   </StrictMode>,
 )
