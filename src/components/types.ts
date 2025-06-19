@@ -113,7 +113,6 @@ export type HistoricCollection = {
   title: string,
   description: string,
   startDate: Date,
-  endDate: Date,
   historicEvents: HistoricEvent['id'][],
   wikiTitle: string,
 }

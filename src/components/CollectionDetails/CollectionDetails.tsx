@@ -179,12 +179,12 @@ export const CollectionDetails: FunctionComponent = () => {
           <Flex flexDirection="column" gap={3}>
           {state.events.map(eventData => (
             <Card.Root key={eventData.eventId} overflow="hidden">
-              <Image
+              {eventData.eventImage && <Image
                 objectFit="cover"
                 maxH="200px"
                 src={eventData.eventImage + '?width=500'}
-                alt="Caffe Latte"
-              />
+                alt={`Image of ${eventData.eventLabel}`}
+              />}
               <Card.Body gap="2">
                 <Card.Title mt="2">{eventData.eventLabel}</Card.Title>
                 <Card.Description>
