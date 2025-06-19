@@ -9,6 +9,7 @@ import "./Mapview.css";
 import {MAP_STYLES} from './types';
 import {CustomMarker} from "@/components/CustomMarker.tsx";
 import {getSeededColor} from "@/utility/colorHelper.ts";
+import {TbPhotoOff} from "react-icons/tb";
 
 
 const MapView = () => {
@@ -63,7 +64,9 @@ const MapView = () => {
                   alt={`Image of ${location.locationLabel}`}
                   className="image-container"
                 />
-                : <div className="image-container image-placeholder"></div>
+                : <div className="image-container image-placeholder">
+                  <TbPhotoOff size={50}/>
+                </div>
               }
               <Box className="popup-location-info-container">
                 <Heading mt="0" lineHeight="1" size="md">{location.locationLabel}</Heading>
