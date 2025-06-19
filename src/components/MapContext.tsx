@@ -1,16 +1,13 @@
 import React, {createContext, type Dispatch, type ReactNode, type SetStateAction, useEffect, useReducer} from "react";
 import {mapReducer, initialMapState, type MapAction, type MapState} from "./mapReducer.ts";
-import {useGetEventLocations} from "@/hooks/useGetEventLocations.ts";
-import type {EventLocation, RestructuredEvent} from "@/components/types.ts";
-import {useGetEventRecords} from "@/hooks/useGetEventRecords.ts";
+import type {EventDto} from "@/components/types.ts";
+import {useGetEvents} from "@/hooks/useGetEvents.ts";
 
 interface MapContextProps {
   state: MapState;
   dispatch: React.Dispatch<MapAction>;
-  eventLocations: EventLocation[],
-  eventRecords: RestructuredEvent[],
-  loadingEvent: boolean,
-  loadingEventRecords: boolean,
+  events: EventDto[],
+  loading: boolean,
   sortOrder: 'ASC' | 'DESC',
   setSortOrder: Dispatch<SetStateAction<'ASC' | 'DESC'>>,
 }
@@ -18,29 +15,28 @@ interface MapContextProps {
 export const MapContext = createContext<MapContextProps>({
   state: initialMapState,
   dispatch: () => {},
-  eventLocations: [],
-  eventRecords: [],
-  loadingEvent: false,
-  loadingEventRecords: false,
+  events: [],
+  loading: false,
   sortOrder: 'ASC',
   setSortOrder: () => {},
 });
 
 export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(mapReducer, initialMapState);
-  const { eventLocations, loadingEvent, updateSelection } = useGetEventLocations();
-  const { eventRecords, loadingEventRecords, updateSelections, sortOrder, setSortOrder } = useGetEventRecords();
+  const { events, loading, updateSelection, sortOrder, setSortOrder } = useGetEvents();
   
   useEffect(() => {
-    updateSelections(state.selectedCollection?.historicEvents || null);
-  }, [state.selectedCollection]);
-  
-  useEffect(() => {
-    updateSelection(state.selectedEvent?.id || null);
-  }, [state.selectedEvent])
+    if (state.selectedEvent) {
+      updateSelection([state.selectedEvent.id]);
+    } else if (state.selectedCollection) {
+      updateSelection(state.selectedCollection.historicEvents)
+    } else {
+      updateSelection([]);
+    }
+  }, [state.selectedEvent, state.selectedCollection])
   
   return (
-    <MapContext.Provider value={{ state, dispatch, eventLocations, eventRecords, loadingEvent, loadingEventRecords, sortOrder, setSortOrder }}>
+    <MapContext.Provider value={{ state, dispatch, events, loading, sortOrder, setSortOrder }}>
       {children}
     </MapContext.Provider>
   );

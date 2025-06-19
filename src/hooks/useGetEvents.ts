@@ -1,22 +1,22 @@
 import {
   groupEventLocations,
   type HistoricEvent,
-  type RestructuredEvent
+  type EventDto
 } from "@/components/types.ts";
 import { useEffect, useState } from "react";
 import { getEventsData } from "@/services/EventsService.ts";
-import {getSortableDate} from "@/utility/dateHelper.ts";
+import { getSortableDate } from "@/utility/dateHelper.ts";
 
-export function useGetEventRecords() {
-  const [eventRecords, setEventRecords] = useState<RestructuredEvent[]>([]);
+export function useGetEvents() {
+  const [events, setEvents] = useState<EventDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [selectedIds, setSelectedIds] = useState<HistoricEvent['id'][]>([]);
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC');
   const [effectiveSortOrder, setEffectiveSortOrder] = useState<'ASC' | 'DESC'>('ASC');
   
-  const sortEvents = (eventRecordsToSort: RestructuredEvent[]) => {
-    const sortedEvents =  [...eventRecordsToSort].sort((a, b) => {
+  const sortEvents = (eventsToSort: EventDto[]) => {
+    const sortedEvents =  [...eventsToSort].sort((a, b) => {
       const dateA = getSortableDate(a.startDate, a.endDate);
       const dateB = getSortableDate(b.startDate, b.endDate);
       
@@ -27,12 +27,12 @@ export function useGetEventRecords() {
       const diff = dateA.getTime() - dateB.getTime();
       return sortOrder === 'ASC' ? diff : -diff;
     });
-    setEventRecords(sortedEvents);
+    setEvents(sortedEvents);
     setEffectiveSortOrder(sortOrder);
   }
   
   useEffect(() => {
-    sortEvents(eventRecords);
+    sortEvents(events);
   }, [sortOrder]);
   
   useEffect(() => {
@@ -49,16 +49,16 @@ export function useGetEventRecords() {
           setLoading(false);
         }
       } else {
-        setEventRecords([]);
+        setEvents([]);
       }
     }
     
     loadData();
   }, [selectedIds]);
   
-  const updateSelections = (ids: HistoricEvent['id'][] | null) => {
+  const updateSelection = (ids: HistoricEvent['id'][] | null) => {
     setSelectedIds(ids ?? []);
   };
   
-  return { eventRecords, loadingEventRecords: loading, error, updateSelections, sortOrder: effectiveSortOrder, setSortOrder };
+  return { events, loading, error, updateSelection, sortOrder: effectiveSortOrder, setSortOrder };
 }

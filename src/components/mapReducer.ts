@@ -36,10 +36,10 @@ export function mapReducer(state: MapState, action: MapAction): MapState {
       return { ...state, selectedEvent: null };
     case "SELECT_COLLECTION": {
       const selectedCollection = historicCollections.find(collection => collection.id === action.payload.collectionId) || null;
-      return { ...state, selectedEvent: null, selectedCollection: selectedCollection}
+      return { ...state, selectedCollection: selectedCollection}
     }
     case "CLEAR_COLLECTION": {
-      return initialMapState;
+      return { ...state, selectedCollection: null};
     }
     case 'SET_SEARCH_QUERY':
       return {...state, currentSearchQuery: action.payload,

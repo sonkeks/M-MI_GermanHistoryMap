@@ -51,7 +51,7 @@ export type EventLocation = {
   };
 }
 
-export type RestructuredEvent = {
+export type EventDto = {
   eventId: string;
   eventLabel: string;
   eventDescription: string;
@@ -66,8 +66,8 @@ export type RestructuredEvent = {
   }[];
 };
 
-export function groupEventLocations(data: EventLocation[]): RestructuredEvent[] {
-  const grouped: Record<string, RestructuredEvent> = {};
+export function groupEventLocations(data: EventLocation[]): EventDto[] {
+  const grouped: Record<string, EventDto> = {};
   
   for (const item of data) {
     const id = item.eventId.value;

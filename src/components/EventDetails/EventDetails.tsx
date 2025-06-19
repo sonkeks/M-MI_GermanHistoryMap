@@ -8,15 +8,24 @@ import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
 
 export const EventDetails: FunctionComponent = () => {
   const { eventId } = useParams();
-  const { eventLocations, dispatch } = useContext(MapContext);
+  const { events, dispatch } = useContext(MapContext);
   const location = useLocation();
-  const {details, loading} = useGetWikiDetails(eventId!, 'EVENT');
+  const { details, loading: loadingWikiDetails } = useGetWikiDetails(eventId!, 'EVENT');
   
   useEffect(() => {
     if (eventId) {
       dispatch({ type: "SELECT_EVENT", payload: {eventId: eventId}})
     }
   }, []);
+  
+  if (loadingWikiDetails) {
+    // TODO: Return Skeleton here
+    return;
+  }
+  
+  if (!events || events.length === 0) {
+    return;
+  }
   
   return (
     <Box>
@@ -33,7 +42,7 @@ export const EventDetails: FunctionComponent = () => {
         )}
       </Flex>
       <Box className="navigation-bar-spacing"></Box>
-      {!loading && details && (
+      {!loadingWikiDetails && details && (
         <>
           <img className="header-image" src={details?.thumbnail?.source} alt={`Image of ${details?.title}`}/>
           <Stack className="container">
@@ -42,7 +51,7 @@ export const EventDetails: FunctionComponent = () => {
           </Stack>
         </>
       )}
-      {loading && (
+      {loadingWikiDetails && (
         <>
           <Skeleton className="header-image" height="300px"></Skeleton>
           <Stack className="container">
@@ -53,6 +62,7 @@ export const EventDetails: FunctionComponent = () => {
           </Stack>
         </>
       )}
+      { /* TODO: Show Table Skeleton on loadingEvents */}
       <Table.Root size="md" interactive>
         <Table.Header>
           <Table.Row>
@@ -62,10 +72,10 @@ export const EventDetails: FunctionComponent = () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {eventLocations.map((location, index) => (
-            <Table.Row className="events-table-row" key={location.locationLabel.value + index}>
-              <Table.Cell>{location.locationLabel.value}</Table.Cell>
-              <Table.Cell>{location.endDate ? new Date(location.endDate.value).toLocaleDateString() : "n.d."}</Table.Cell>
+          {events[0].locations.map((location, index) => (
+            <Table.Row className="events-table-row" key={index}>
+              <Table.Cell>{location.locationLabel}</Table.Cell>
+              <Table.Cell>{events[0].endDate ? new Date(events[0].endDate).toLocaleDateString() : "n.d."}</Table.Cell>
               <Table.Cell className="icon-cell">
                 <TbChevronRight />
               </Table.Cell>

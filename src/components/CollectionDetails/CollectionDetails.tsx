@@ -15,9 +15,8 @@ import {
 } from "@chakra-ui/react";
 import {type FunctionComponent, useContext, useEffect, useRef} from "react";
 import {Link, useParams} from "react-router-dom";
-import {TbChevronDown, TbChevronLeft, TbChevronUp, TbGitCommit, TbInfoCircle, TbList} from "react-icons/tb";
+import {TbCarouselVertical, TbChevronDown, TbChevronLeft, TbChevronUp, TbGitCommit, TbInfoCircle} from "react-icons/tb";
 import {MapContext} from "@/components/MapContext.tsx";
-import {historicCollections} from "@/components/data.ts";
 import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
 import "./CollectionDetails.css";
 import {getDateFormat} from "@/utility/dateHelper.ts";
@@ -25,11 +24,9 @@ import {getSeededColor} from "@/utility/colorHelper.ts";
 
 export const CollectionDetails: FunctionComponent = () => {
   const { collectionId } = useParams();
-  const { dispatch, eventRecords, sortOrder, setSortOrder } = useContext(MapContext);
+  const { dispatch, events, sortOrder, setSortOrder } = useContext(MapContext);
   const {details, loading} = useGetWikiDetails(collectionId!, 'COLLECTION');
   const sectionRef = useRef<HTMLDivElement | null>(null);
-  
-  const historicCollection = historicCollections.find(item => item.id === collectionId);
   
   useEffect(() => {
     if (collectionId) {
@@ -42,10 +39,10 @@ export const CollectionDetails: FunctionComponent = () => {
   };
   
   const getStepNumber = (index: number) => {
-    return sortOrder === 'ASC' ? (index + 1) : (eventRecords.length - index);
+    return sortOrder === 'ASC' ? (index + 1) : (events.length - index);
   }
   
-  if (!historicCollection) {
+  if (!collectionId) {
     return;
   }
   
@@ -90,7 +87,7 @@ export const CollectionDetails: FunctionComponent = () => {
             Timeline
           </Tabs.Trigger>
           <Tabs.Trigger value="list">
-            <TbList size={18}/>
+            <TbCarouselVertical size={18}/>
             List
           </Tabs.Trigger>
         </Tabs.List>
@@ -124,19 +121,19 @@ export const CollectionDetails: FunctionComponent = () => {
             </Button>
           </Flex>
           <Timeline.Root>
-            {eventRecords.map((structuredEvent, index) => (
-              <Timeline.Item key={structuredEvent.eventId}>
+            {events.map((eventData, index) => (
+              <Timeline.Item key={eventData.eventId}>
                 <Timeline.Connector>
                   <Timeline.Separator />
-                  <Timeline.Indicator style={{backgroundColor: getSeededColor(getStepNumber(index), eventRecords.length)}}>
+                  <Timeline.Indicator style={{backgroundColor: getSeededColor(getStepNumber(index), events.length)}}>
                     {getStepNumber(index)}
                   </Timeline.Indicator>
                 </Timeline.Connector>
                 <Timeline.Content>
-                  <Timeline.Title>{structuredEvent.eventLabel}</Timeline.Title>
-                  <Timeline.Description>{getDateFormat(structuredEvent.startDate, structuredEvent.endDate)}</Timeline.Description>
+                  <Timeline.Title>{eventData.eventLabel}</Timeline.Title>
+                  <Timeline.Description>{getDateFormat(eventData.startDate, eventData.endDate)}</Timeline.Description>
                   <Text textStyle="sm">
-                    {structuredEvent.eventDescription}
+                    {eventData.eventDescription}
                   </Text>
                 </Timeline.Content>
               </Timeline.Item>
@@ -172,18 +169,18 @@ export const CollectionDetails: FunctionComponent = () => {
             </Button>
           </Flex>
           <Flex flexDirection="column" gap={3}>
-          {eventRecords.map(structuredEvent => (
-            <Card.Root key={structuredEvent.eventId} overflow="hidden">
+          {events.map(eventData => (
+            <Card.Root key={eventData.eventId} overflow="hidden">
               <Image
                 objectFit="cover"
                 maxH="200px"
-                src={structuredEvent.eventImage + '?width=500'}
+                src={eventData.eventImage + '?width=500'}
                 alt="Caffe Latte"
               />
               <Card.Body gap="2">
-                <Card.Title mt="2">{structuredEvent.eventLabel}</Card.Title>
+                <Card.Title mt="2">{eventData.eventLabel}</Card.Title>
                 <Card.Description>
-                  {structuredEvent.eventDescription}
+                  {eventData.eventDescription}
                 </Card.Description>
               </Card.Body>
               <Card.Footer justifyContent="end">
