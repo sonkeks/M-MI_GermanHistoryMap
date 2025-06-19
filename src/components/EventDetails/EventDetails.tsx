@@ -21,13 +21,58 @@ export const EventDetails: FunctionComponent = () => {
     }
   }, []);
   
-  if (loadingWikiDetails) {
-    // TODO: Return Skeleton here
-    return;
-  }
-  
-  if (!state.events || state.events.length === 0) {
-    return;
+  const showTableOfLocations = () => {
+    if (state.isLoadingEvents) {
+      return (
+        <Table.Root size="md" interactive>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>Location</Table.ColumnHeader>
+              <Table.ColumnHeader>Date</Table.ColumnHeader>
+              <Table.ColumnHeader className="icon-cell"></Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Table.Row className="events-table-row" key={index}>
+                <Table.Cell><Skeleton height={5} width={200}></Skeleton></Table.Cell>
+                <Table.Cell><Skeleton height={5} width={50}></Skeleton></Table.Cell>
+                <Table.Cell className="icon-cell">
+                  <TbChevronRight />
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      )
+    }
+    
+    if (!state.events || state.events.length === 0) {
+      return;
+    }
+    
+    return (
+      <Table.Root size="md" interactive>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Location</Table.ColumnHeader>
+            <Table.ColumnHeader>Date</Table.ColumnHeader>
+            <Table.ColumnHeader className="icon-cell"></Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {state.events[0].locations.map((location, index) => (
+            <Table.Row className="events-table-row" key={index}>
+              <Table.Cell>{location.locationLabel}</Table.Cell>
+              <Table.Cell>{state.events[0].endDate ? new Date(state.events[0].endDate).toLocaleDateString() : "n.d."}</Table.Cell>
+              <Table.Cell className="icon-cell">
+                <TbChevronRight />
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
+    )
   }
   
   return (
@@ -66,26 +111,7 @@ export const EventDetails: FunctionComponent = () => {
         </>
       )}
       { /* TODO: Show Table Skeleton on loadingEvents */}
-      <Table.Root size="md" interactive>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>Location</Table.ColumnHeader>
-            <Table.ColumnHeader>Date</Table.ColumnHeader>
-            <Table.ColumnHeader className="icon-cell"></Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {state.events[0].locations.map((location, index) => (
-            <Table.Row className="events-table-row" key={index}>
-              <Table.Cell>{location.locationLabel}</Table.Cell>
-              <Table.Cell>{state.events[0].endDate ? new Date(state.events[0].endDate).toLocaleDateString() : "n.d."}</Table.Cell>
-              <Table.Cell className="icon-cell">
-                <TbChevronRight />
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
+      {showTableOfLocations()}
     </Box>
   )
 }
