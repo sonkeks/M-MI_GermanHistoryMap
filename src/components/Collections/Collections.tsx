@@ -5,6 +5,7 @@ import {useSearch} from "@/hooks/useSearch.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 import type {HistoricCollection} from "@/components/types.ts";
 import {historicCollections} from "@/components/data.ts";
+import {filterCollections} from "@/utility/searchHelper.ts";
 
 export const Collections: FunctionComponent = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export const Collections: FunctionComponent = () => {
   useEffect(() => {
     let collections = historicCollections;
     if (searchValue !== "") {
-      collections = collections.filter(item => item.title.includes(searchValue));
+      collections = filterCollections(searchValue);
     }
     setCollections(collections);
   }, [searchValue]);

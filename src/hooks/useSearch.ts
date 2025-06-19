@@ -19,15 +19,19 @@ export function useSearch() {
     }
   }, [searchParams]);
   
+  const buildPath = (destination: string) => {
+    return `/${destination}?q=${searchValue}`;
+  }
+  
   const onFocus = () => {
     if (location.pathname.includes('collections')) {
       dispatch({type: "CLEAR_COLLECTION"});
-      navigate('/collections');
+      navigate(buildPath("collections"));
     } else if (location.pathname.includes('events')) {
       dispatch({type: "CLEAR_EVENT"});
-      navigate('/events');
+      navigate(buildPath("events"));
     } else {
-      navigate('/');
+      navigate(buildPath("collections"));
     }
   }
   

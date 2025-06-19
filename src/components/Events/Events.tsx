@@ -6,6 +6,7 @@ import "./Events.css";
 import {useLocation, useNavigate} from "react-router-dom";
 import type {HistoricEvent} from "@/components/types.ts";
 import {useSearch} from "@/hooks/useSearch.ts";
+import {filterEvents} from "@/utility/searchHelper.ts";
 
 export const Events: FunctionComponent = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export const Events: FunctionComponent = () => {
   useEffect(() => {
     let events = historicEvents;
     if (searchValue !== "") {
-      events = events.filter(item => item.label.includes(searchValue));
+      events = filterEvents(searchValue);
     }
     setEvents(events);
   }, [searchValue]);

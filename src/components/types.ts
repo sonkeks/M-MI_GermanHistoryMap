@@ -54,7 +54,7 @@ export type EventLocation = {
 export type EventDto = {
   eventId: string;
   eventLabel: string;
-  eventDescription: string;
+  eventDescription?: string;
   eventImage?: string;
   startDate?: string;
   endDate?: string;
@@ -76,7 +76,7 @@ export function groupEventLocations(data: EventLocation[]): EventDto[] {
         grouped[id] = {
           eventId: id,
           eventLabel: item.eventLabel.value,
-          eventDescription: item.eventDescription.value,
+          eventDescription: item.eventDescription ? item.eventDescription.value : "",
           eventImage: item.eventImage && item.eventImage.type === "uri" ? item.eventImage.value : undefined,
           startDate: item.startDate ? item.startDate.value : undefined,
           endDate: item.endDate ? item.endDate.value : undefined,
