@@ -1,20 +1,29 @@
-import {MapContainer, TileLayer, Popup, ZoomControl} from 'react-leaflet';
+import {MapContainer, Popup, TileLayer, ZoomControl} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type {LatLngTuple} from "leaflet";
 import {MapContext} from "@/components/MapContext.tsx";
-import {useContext} from "react";
+import {useContext, useMemo} from "react";
 import {pointStringToLatLngTuple} from "@/services/EventsService.ts";
 import {Box, Heading, Stack, Text} from "@chakra-ui/react";
 import "./Mapview.css";
 import {MAP_STYLES} from './types';
 import {CustomMarker} from "@/components/CustomMarker.tsx";
+import {getSeededColor} from "@/utility/colorHelper.ts";
 
 
 const MapView = () => {
-  const {eventLocations, eventRecords, loadingEvent, loadingEventRecords, state} = useContext(MapContext);
+  const {eventLocations, eventRecords, loadingEvent, loadingEventRecords, state, sortOrder} = useContext(MapContext);
   
   const center: LatLngTuple = [51.1657, 10.4515];
   const zoom = 6;
+  
+  const eventIdToStepMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    eventRecords.forEach((event, index) => {
+      map[event.eventId] = sortOrder === 'ASC' ? index + 1 : eventRecords.length - index;
+    });
+    return map;
+  }, [eventRecords, sortOrder]);
   
   const allEventLocations = eventRecords.flatMap(event =>
     event.locations
@@ -27,8 +36,7 @@ const MapView = () => {
       }))
   )
   
-  // Use CircleMarker with Number corresponding to the Timeline.
-  // Make Timeline follow a color palette that is applied to the markers.
+  const getStepNumber = (eventId: string) => eventIdToStepMap[eventId] || 0;
   
   return (
     <MapContainer zoomControl={false} center={center} zoom={zoom} style={{ height: '100vh', width: '100%' }}>
@@ -61,7 +69,7 @@ const MapView = () => {
         )
       })}
       {eventRecords && !loadingEventRecords && allEventLocations.map((location, index) => (
-        <CustomMarker key={location.eventId + index} number={index + 1} position={pointStringToLatLngTuple(location.coordinate || "")}>
+        <CustomMarker key={location.eventId + index} number={getStepNumber(location.eventId)} color={getSeededColor(getStepNumber(location.eventId), eventRecords.length)} position={pointStringToLatLngTuple(location.coordinate || "")}>
           <Popup className="custom-popup">
             <Stack>
               {location.image

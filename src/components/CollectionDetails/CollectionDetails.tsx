@@ -13,20 +13,20 @@ import {
   Portal,
   Card, Skeleton
 } from "@chakra-ui/react";
-import {type FunctionComponent, useContext, useEffect, useRef, useState} from "react";
+import {type FunctionComponent, useContext, useEffect, useRef} from "react";
 import {Link, useParams} from "react-router-dom";
 import {TbChevronDown, TbChevronLeft, TbChevronUp, TbGitCommit, TbInfoCircle, TbList} from "react-icons/tb";
 import {MapContext} from "@/components/MapContext.tsx";
 import {historicCollections} from "@/components/data.ts";
 import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
 import "./CollectionDetails.css";
-import {getDateFormat, getSortableDate} from "@/utility/dateHelper.ts";
+import {getDateFormat} from "@/utility/dateHelper.ts";
+import {getSeededColor} from "@/utility/colorHelper.ts";
 
 export const CollectionDetails: FunctionComponent = () => {
   const { collectionId } = useParams();
-  const { dispatch, eventRecords } = useContext(MapContext);
+  const { dispatch, eventRecords, sortOrder, setSortOrder } = useContext(MapContext);
   const {details, loading} = useGetWikiDetails(collectionId!, 'COLLECTION');
-  const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC');
   const sectionRef = useRef<HTMLDivElement | null>(null);
   
   const historicCollection = historicCollections.find(item => item.id === collectionId);
@@ -37,23 +37,13 @@ export const CollectionDetails: FunctionComponent = () => {
     }
   }, []);
   
-  const sortedEvents = () => {
-    return [...eventRecords].sort((a, b) => {
-      const dateA = getSortableDate(a.startDate, a.endDate);
-      const dateB = getSortableDate(b.startDate, b.endDate);
-      
-      if (!dateA && !dateB) return 0;
-      if (!dateA) return 1;
-      if (!dateB) return -1;
-      
-      const diff = dateA.getTime() - dateB.getTime();
-      return sortOrder === 'ASC' ? diff : -diff;
-    });
-  }
-  
   const scrollToSection = () => {
     sectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  
+  const getStepNumber = (index: number) => {
+    return sortOrder === 'ASC' ? (index + 1) : (eventRecords.length - index);
+  }
   
   if (!historicCollection) {
     return;
@@ -134,12 +124,12 @@ export const CollectionDetails: FunctionComponent = () => {
             </Button>
           </Flex>
           <Timeline.Root>
-            {sortedEvents().map((structuredEvent, index) => (
+            {eventRecords.map((structuredEvent, index) => (
               <Timeline.Item key={structuredEvent.eventId}>
                 <Timeline.Connector>
                   <Timeline.Separator />
-                  <Timeline.Indicator>
-                    {sortOrder === 'ASC' ? (index + 1) : (eventRecords.length - index)}
+                  <Timeline.Indicator style={{backgroundColor: getSeededColor(getStepNumber(index), eventRecords.length)}}>
+                    {getStepNumber(index)}
                   </Timeline.Indicator>
                 </Timeline.Connector>
                 <Timeline.Content>
@@ -182,7 +172,7 @@ export const CollectionDetails: FunctionComponent = () => {
             </Button>
           </Flex>
           <Flex flexDirection="column" gap={3}>
-          {sortedEvents().map(structuredEvent => (
+          {eventRecords.map(structuredEvent => (
             <Card.Root key={structuredEvent.eventId} overflow="hidden">
               <Image
                 objectFit="cover"
