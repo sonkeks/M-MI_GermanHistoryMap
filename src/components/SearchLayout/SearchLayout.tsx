@@ -1,6 +1,6 @@
 import {type FunctionComponent, useContext, useEffect, useState} from "react";
 import {Box, Flex, Input, InputGroup, Tabs} from "@chakra-ui/react";
-import {TbBooks, TbCalendarMonth, TbCategory, TbSearch} from "react-icons/tb";
+import {TbBooks, TbCalendarMonth, TbSearch} from "react-icons/tb";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import "./SearchLayout.css";
 import {MapContext} from "@/components/MapContext.tsx";
@@ -11,7 +11,7 @@ import {buildUrlForCategory} from "@/utility/routingHelpers.ts";
 export const SearchLayout: FunctionComponent = () => {
   const {state} = useContext(MapContext);
   const {searchValue, setSearchValue, onFocus} = useSearch();
-  const [category, setCategory] = useState<Category>('ALL');
+  const [category, setCategory] = useState<Category>('COLLECTIONS');
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -22,7 +22,7 @@ export const SearchLayout: FunctionComponent = () => {
     } else if (pathname.includes('/collections')) {
       setCategory('COLLECTIONS')
     } else {
-      setCategory('ALL')
+      setCategory('COLLECTIONS')
     }
   }, [location]);
   
@@ -43,8 +43,6 @@ export const SearchLayout: FunctionComponent = () => {
   
   const getPlaceholder = () => {
     switch (category) {
-      case "ALL":
-        return "Search for anything"
       case "EVENTS":
         return "Search for an Event"
       case "COLLECTIONS":
@@ -66,10 +64,6 @@ export const SearchLayout: FunctionComponent = () => {
       </InputGroup>
       <Tabs.Root variant="line" value={category} onValueChange={(e) => handleCategorySelect(e)}>
         <Tabs.List>
-          <Tabs.Trigger value="ALL">
-            <TbCategory />
-            All
-          </Tabs.Trigger>
           <Tabs.Trigger value="COLLECTIONS">
             <TbBooks />
             Collections

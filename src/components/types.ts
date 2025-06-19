@@ -151,4 +151,4 @@ export const MAP_STYLES: Record<string, MapStyle> = {
 
 export type MapStyleKey = keyof typeof MAP_STYLES;
 
-export type Category = 'EVENTS' | 'COLLECTIONS' | 'ALL';
+export type Category = 'EVENTS' | 'COLLECTIONS';
