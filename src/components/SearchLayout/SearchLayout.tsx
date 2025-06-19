@@ -10,7 +10,7 @@ import {buildUrlForCategory} from "@/utility/routingHelpers.ts";
 
 export const SearchLayout: FunctionComponent = () => {
   const {state} = useContext(MapContext);
-  const {searchValue, setSearchValue} = useSearch();
+  const {searchValue, setSearchValue, onFocus} = useSearch();
   const [category, setCategory] = useState<Category>('ALL');
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,7 +55,14 @@ export const SearchLayout: FunctionComponent = () => {
   return (
     <Flex direction="column" height="100vh">
       <InputGroup startElement={<TbSearch size={16} />} w="full" className="search-bar">
-        <Input flex="1" size="lg" placeholder={getPlaceholder()} value={searchValue} onChange={(e) => setSearchValue(e.currentTarget.value)} />
+        <Input
+          flex="1"
+          size="lg"
+          placeholder={getPlaceholder()}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.currentTarget.value)}
+          onFocus={onFocus}
+        />
       </InputGroup>
       <Tabs.Root variant="line" value={category} onValueChange={(e) => handleCategorySelect(e)}>
         <Tabs.List>

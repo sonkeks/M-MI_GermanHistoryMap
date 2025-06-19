@@ -1,5 +1,5 @@
 import {useContext, useEffect, useRef, useState} from 'react';
-import { useSearchParams } from 'react-router-dom';
+import {useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import { MapContext } from '@/components/MapContext';
 
 const DEBOUNCE_IN_MS = 500;
@@ -8,6 +8,8 @@ export function useSearch() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchValue, setSearchValue] = useState(searchParams.get('q') || '');
   const { dispatch } = useContext(MapContext);
+  const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const updatedSearchValue = searchParams.get('q') || '';
@@ -16,6 +18,18 @@ export function useSearch() {
       dispatch({ type: 'SET_SEARCH_QUERY', payload: updatedSearchValue });
     }
   }, [searchParams]);
+  
+  const onFocus = () => {
+    if (location.pathname.includes('collections')) {
+      dispatch({type: "CLEAR_COLLECTION"});
+      navigate('/collections');
+    } else if (location.pathname.includes('events')) {
+      dispatch({type: "CLEAR_EVENT"});
+      navigate('/events');
+    } else {
+      navigate('/');
+    }
+  }
   
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
@@ -36,5 +50,6 @@ export function useSearch() {
   return {
     searchValue,
     setSearchValue: debouncedSetSearch,
+    onFocus,
   };
 }
