@@ -50,10 +50,12 @@ async function fetchWikidataSPARQL(query: string): Promise<EventLocation[]> {
 export async function getEventsData(ids: HistoricEvent['id'][]) {
   const query = buildDetailsQuery(ids);
   const result = fetchWikidataSPARQL(query);
-  toaster.promise(result, {
-    success: { title: "Locations Retrieved" },
-    loading: { title: "Retrieving Locations..." }
-  })
+  queueMicrotask(() => {
+    toaster.promise(result, {
+      success: { title: "Locations Retrieved" },
+      loading: { title: "Retrieving Locations..." }
+    })
+  });
   return result;
 }
 
