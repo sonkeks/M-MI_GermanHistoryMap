@@ -118,6 +118,8 @@ export type HistoricCollection = {
   wikiTitle: string,
 }
 
+export type SortOrder = 'ASC' | 'DESC';
+
 export type MapStyle = {
   url: string;
   attribution: string;

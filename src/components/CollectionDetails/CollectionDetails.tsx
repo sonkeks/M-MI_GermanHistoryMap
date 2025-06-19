@@ -21,15 +21,23 @@ import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
 import "./CollectionDetails.css";
 import {getDateFormat} from "@/utility/dateHelper.ts";
 import {getSeededColor} from "@/utility/colorHelper.ts";
+import {useGetEvents} from "@/hooks/useGetEvents.ts";
+import {historicCollections} from "@/components/data.ts";
 
 export const CollectionDetails: FunctionComponent = () => {
   const { collectionId } = useParams();
-  const { dispatch, events, sortOrder, setSortOrder } = useContext(MapContext);
+  const { state, dispatch } = useContext(MapContext);
   const {details, loading} = useGetWikiDetails(collectionId!, 'COLLECTION');
   const sectionRef = useRef<HTMLDivElement | null>(null);
+  const { updateSelection } = useGetEvents();
   
   useEffect(() => {
     if (collectionId) {
+      updateSelection(
+        historicCollections
+          .find(collection => collection.id === collectionId)
+          ?.historicEvents || []
+      )
       dispatch({ type: "SELECT_COLLECTION", payload: {collectionId: collectionId}});
     }
   }, []);
@@ -39,7 +47,7 @@ export const CollectionDetails: FunctionComponent = () => {
   };
   
   const getStepNumber = (index: number) => {
-    return sortOrder === 'ASC' ? (index + 1) : (events.length - index);
+    return state.sortOrder === 'ASC' ? (index + 1) : (state.events.length - index);
   }
   
   if (!collectionId) {
@@ -115,17 +123,17 @@ export const CollectionDetails: FunctionComponent = () => {
               </HoverCard.Root>
               <Heading fontSize="md">Timeline</Heading>
             </Flex>
-            <Button variant="ghost" onClick={() => setSortOrder((prevState) => prevState === 'ASC' ? 'DESC' : 'ASC')}>
-              {sortOrder === 'ASC' ? 'Chronological' : 'Most Recent'}
-              {sortOrder === 'ASC' ? <TbChevronDown /> :  <TbChevronUp />}
+            <Button variant="ghost" onClick={() => dispatch({type: 'TOGGLE_SORT_ORDER'})}>
+              {state.sortOrder === 'ASC' ? 'Chronological' : 'Most Recent'}
+              {state.sortOrder === 'ASC' ? <TbChevronDown /> :  <TbChevronUp />}
             </Button>
           </Flex>
           <Timeline.Root>
-            {events.map((eventData, index) => (
+            {state.events.map((eventData, index) => (
               <Timeline.Item key={eventData.eventId}>
                 <Timeline.Connector>
                   <Timeline.Separator />
-                  <Timeline.Indicator style={{backgroundColor: getSeededColor(getStepNumber(index), events.length)}}>
+                  <Timeline.Indicator style={{backgroundColor: getSeededColor(getStepNumber(index), state.events.length)}}>
                     {getStepNumber(index)}
                   </Timeline.Indicator>
                 </Timeline.Connector>
@@ -163,13 +171,13 @@ export const CollectionDetails: FunctionComponent = () => {
               </HoverCard.Root>
               <Heading fontSize="md">Event List</Heading>
             </Flex>
-            <Button variant="ghost" onClick={() => setSortOrder((prevState) => prevState === 'ASC' ? 'DESC' : 'ASC')}>
-              {sortOrder === 'ASC' ? 'Chronological' : 'Most Recent'}
-              {sortOrder === 'ASC' ? <TbChevronDown /> :  <TbChevronUp />}
+            <Button variant="ghost" onClick={() => dispatch({type: 'TOGGLE_SORT_ORDER'})}>
+              {state.sortOrder === 'ASC' ? 'Chronological' : 'Most Recent'}
+              {state.sortOrder === 'ASC' ? <TbChevronDown /> :  <TbChevronUp />}
             </Button>
           </Flex>
           <Flex flexDirection="column" gap={3}>
-          {events.map(eventData => (
+          {state.events.map(eventData => (
             <Card.Root key={eventData.eventId} overflow="hidden">
               <Image
                 objectFit="cover"

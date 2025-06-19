@@ -5,15 +5,18 @@ import {Link, useLocation, useParams} from "react-router-dom";
 import {MapContext} from "@/components/MapContext.tsx";
 import {TbChevronLeft, TbChevronRight, TbExternalLink} from "react-icons/tb";
 import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
+import {useGetEvents} from "@/hooks/useGetEvents.ts";
 
 export const EventDetails: FunctionComponent = () => {
   const { eventId } = useParams();
-  const { events, dispatch } = useContext(MapContext);
+  const { state, dispatch } = useContext(MapContext);
   const location = useLocation();
   const { details, loading: loadingWikiDetails } = useGetWikiDetails(eventId!, 'EVENT');
+  const { updateSelection } = useGetEvents();
   
   useEffect(() => {
     if (eventId) {
+      updateSelection([eventId])
       dispatch({ type: "SELECT_EVENT", payload: {eventId: eventId}})
     }
   }, []);
@@ -23,7 +26,7 @@ export const EventDetails: FunctionComponent = () => {
     return;
   }
   
-  if (!events || events.length === 0) {
+  if (!state.events || state.events.length === 0) {
     return;
   }
   
@@ -72,10 +75,10 @@ export const EventDetails: FunctionComponent = () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {events[0].locations.map((location, index) => (
+          {state.events[0].locations.map((location, index) => (
             <Table.Row className="events-table-row" key={index}>
               <Table.Cell>{location.locationLabel}</Table.Cell>
-              <Table.Cell>{events[0].endDate ? new Date(events[0].endDate).toLocaleDateString() : "n.d."}</Table.Cell>
+              <Table.Cell>{state.events[0].endDate ? new Date(state.events[0].endDate).toLocaleDateString() : "n.d."}</Table.Cell>
               <Table.Cell className="icon-cell">
                 <TbChevronRight />
               </Table.Cell>

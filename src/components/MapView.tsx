@@ -12,20 +12,20 @@ import {getSeededColor} from "@/utility/colorHelper.ts";
 
 
 const MapView = () => {
-  const {events, loading, state, sortOrder} = useContext(MapContext);
+  const {state} = useContext(MapContext);
   
   const center: LatLngTuple = [51.1657, 10.4515];
   const zoom = 6;
   
   const eventIdToStepMap = useMemo(() => {
     const map: Record<string, number> = {};
-    events.forEach((eventData, index) => {
-      map[eventData.eventId] = sortOrder === 'ASC' ? index + 1 : events.length - index;
+    state.events.forEach((eventData, index) => {
+      map[eventData.eventId] = state.sortOrder === 'ASC' ? index + 1 : state.events.length - index;
     });
     return map;
-  }, [events, sortOrder]);
+  }, [state.events, state.sortOrder]);
   
-  const structuredEvents = events.flatMap(eventData =>
+  const structuredEvents = state.events.flatMap(eventData =>
     eventData.locations
       .filter(location => location.coordinate)
       .map(location => ({
@@ -39,11 +39,11 @@ const MapView = () => {
   const getStepNumber = (eventId: string) => eventIdToStepMap[eventId] || 0;
   
   const getColor = (eventId: string) => {
-    if (events.length === 1) {
+    if (state.events.length === 1) {
       return '#000000';
     }
     const stepNumber = getStepNumber(eventId);
-    return getSeededColor(stepNumber, events.length);
+    return getSeededColor(stepNumber, state.events.length);
   }
   
   return (
@@ -53,8 +53,8 @@ const MapView = () => {
         attribution={MAP_STYLES[state.mapStyle].attribution}
       />
       <ZoomControl position='bottomright' />
-      {events && !loading && structuredEvents.map((location, index) => (
-        <CustomMarker key={location.eventId + index} number={events.length > 1 ? getStepNumber(location.eventId) : undefined} color={getColor(location.eventId)} position={pointStringToLatLngTuple(location.coordinate || "")}>
+      {state.events && !state.isLoadingEvents && structuredEvents.map((location, index) => (
+        <CustomMarker key={location.eventId + index} number={state.events.length > 1 ? getStepNumber(location.eventId) : undefined} color={getColor(location.eventId)} position={pointStringToLatLngTuple(location.coordinate || "")}>
           <Popup className="custom-popup">
             <Stack>
               {location.image

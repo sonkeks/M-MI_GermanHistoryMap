@@ -1,55 +1,45 @@
 import {
   groupEventLocations,
   type HistoricEvent,
-  type EventDto
 } from "@/components/types.ts";
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { getEventsData } from "@/services/EventsService.ts";
-import { getSortableDate } from "@/utility/dateHelper.ts";
+import {MapContext} from "@/components/MapContext.tsx";
 
 export function useGetEvents() {
-  const [events, setEvents] = useState<EventDto[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { state, dispatch } = useContext(MapContext);
   const [error, setError] = useState<Error | null>(null);
   const [selectedIds, setSelectedIds] = useState<HistoricEvent['id'][]>([]);
-  const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC');
-  const [effectiveSortOrder, setEffectiveSortOrder] = useState<'ASC' | 'DESC'>('ASC');
-  
-  const sortEvents = (eventsToSort: EventDto[]) => {
-    const sortedEvents =  [...eventsToSort].sort((a, b) => {
-      const dateA = getSortableDate(a.startDate, a.endDate);
-      const dateB = getSortableDate(b.startDate, b.endDate);
-      
-      if (!dateA && !dateB) return 0;
-      if (!dateA) return 1;
-      if (!dateB) return -1;
-      
-      const diff = dateA.getTime() - dateB.getTime();
-      return sortOrder === 'ASC' ? diff : -diff;
-    });
-    setEvents(sortedEvents);
-    setEffectiveSortOrder(sortOrder);
-  }
-  
-  useEffect(() => {
-    sortEvents(events);
-  }, [sortOrder]);
   
   useEffect(() => {
     async function loadData() {
       if (selectedIds.length > 0) {
-        setLoading(true);
+        dispatch({
+          type: 'SET_IS_LOADING',
+          payload: true
+        })
         try {
           const allResults = await getEventsData(selectedIds);
           const restructuredEvents = groupEventLocations(allResults);
-          sortEvents(restructuredEvents);
+          dispatch({
+            type: 'UPDATE_DISPLAYED_EVENTS',
+            payload: {
+              sortOrder: state.sortOrder,
+              events: restructuredEvents
+            }
+          })
         } catch (err: any) {
           setError(err);
         } finally {
-          setLoading(false);
+          dispatch({
+            type: 'SET_IS_LOADING',
+            payload: false
+          })
         }
       } else {
-        setEvents([]);
+        dispatch({
+          type: 'CLEAR_DISPLAYED_EVENTS',
+        });
       }
     }
     
@@ -60,5 +50,5 @@ export function useGetEvents() {
     setSelectedIds(ids ?? []);
   };
   
-  return { events, loading, error, updateSelection, sortOrder: effectiveSortOrder, setSortOrder };
+  return { error, updateSelection };
 }
