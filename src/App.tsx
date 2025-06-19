@@ -3,6 +3,7 @@ import MapView from "./components/MapView.tsx";
 import {EventProvider} from "@/components/MapContext.tsx";
 import {SideMenu} from "@/components/SideMenu.tsx";
 import {Layout} from "@/components/Layout/Layout.tsx";
+import {Toaster} from "@/components/ui/toaster.tsx";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <SideMenu />
       </Layout>
       <MapView />
+      <Toaster />
     </EventProvider>
   )
 }

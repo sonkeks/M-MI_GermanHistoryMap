@@ -1,5 +1,6 @@
 import type {EventLocation, HistoricEvent} from "@/components/types.ts";
 import type {LatLngTuple} from "leaflet";
+import {toaster} from "@/components/ui/toaster.tsx";
 
 function buildDetailsQuery(ids: HistoricEvent['id'][]): string {
   const values = ids.join(' ');
@@ -48,7 +49,12 @@ async function fetchWikidataSPARQL(query: string): Promise<EventLocation[]> {
 
 export async function getEventsData(ids: HistoricEvent['id'][]) {
   const query = buildDetailsQuery(ids);
-  return fetchWikidataSPARQL(query);
+  const result = fetchWikidataSPARQL(query);
+  toaster.promise(result, {
+    success: { title: "Locations Retrieved" },
+    loading: { title: "Retrieving Locations..." }
+  })
+  return result;
 }
 
 export function pointStringToLatLngTuple(point: string): LatLngTuple {
