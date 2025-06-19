@@ -3,13 +3,13 @@ import 'leaflet/dist/leaflet.css';
 import type {LatLngTuple} from "leaflet";
 import {MapContext} from "@/components/MapContext.tsx";
 import {useContext, useMemo} from "react";
-import {pointStringToLatLngTuple} from "@/services/EventsService.ts";
 import {Box, Heading, Stack, Text} from "@chakra-ui/react";
 import "./Mapview.css";
 import {MAP_STYLES} from './types';
 import {CustomMarker} from "@/components/CustomMarker.tsx";
 import {getSeededColor} from "@/utility/colorHelper.ts";
 import {TbPhotoOff} from "react-icons/tb";
+import FitBounds from "@/components/FitBounds.tsx";
 
 
 const MapView = () => {
@@ -37,6 +37,10 @@ const MapView = () => {
       }))
   )
   
+  const latLngs: LatLngTuple[] = structuredEvents
+    .map(e => e.coordinate)
+    .filter((c): c is LatLngTuple => !!c);
+  
   const getStepNumber = (eventId: string) => eventIdToStepMap[eventId] || 0;
   
   const getColor = (eventId: string) => {
@@ -55,7 +59,7 @@ const MapView = () => {
       />
       <ZoomControl position='bottomright' />
       {state.events && !state.isLoadingEvents && structuredEvents.map((location, index) => (
-        <CustomMarker key={location.eventId + index} number={state.events.length > 1 ? getStepNumber(location.eventId) : undefined} color={getColor(location.eventId)} position={pointStringToLatLngTuple(location.coordinate || "")}>
+        <CustomMarker key={location.eventId + index} number={state.events.length > 1 ? getStepNumber(location.eventId) : undefined} color={getColor(location.eventId)} position={location.coordinate}>
           <Popup className="custom-popup">
             <Stack>
               {location.image
@@ -77,6 +81,7 @@ const MapView = () => {
           </Popup>
         </CustomMarker>
       ))}
+      <FitBounds markerPositions={latLngs} />
     </MapContainer>
   );
 };

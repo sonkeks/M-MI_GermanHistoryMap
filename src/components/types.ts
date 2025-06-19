@@ -1,6 +1,8 @@
 import openStreetMapImage from '@/assets/OpenStreetMap.png';
 import naturalEarthImage from '@/assets/NaturalEarth.png';
 import satelliteImage from '@/assets/Satellite.png';
+import {pointStringToLatLngTuple} from "@/services/EventsService.ts";
+import type {LatLngTuple} from "leaflet";
 
 export type EventLocation = {
   event: {
@@ -61,7 +63,7 @@ export type EventDto = {
   image?: string;
   locations: {
     locationLabel?: string;
-    coordinate?: string;
+    coordinate: LatLngTuple;
     image?: string;
   }[];
 };
@@ -86,10 +88,10 @@ export function groupEventLocations(data: EventLocation[]): EventDto[] {
       }
       
       // Only add location if coordinate or locationLabel exists
-      if (item.coordinate?.value || item.locationLabel?.value) {
+      if (item.coordinate?.value) {
         grouped[id].locations.push({
           locationLabel: item.locationLabel?.value,
-          coordinate: item.coordinate?.value,
+          coordinate: pointStringToLatLngTuple(item.coordinate.value),
           image: item.image?.value,
         });
       }
