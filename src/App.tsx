@@ -4,6 +4,7 @@ import {EventProvider} from "@/components/MapContext.tsx";
 import {SideMenu} from "@/components/SideMenu.tsx";
 import {Layout} from "@/components/Layout/Layout.tsx";
 import {Toaster} from "@/components/ui/toaster.tsx";
+import {MapActions} from "@/components/MapActions.tsx";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <SideMenu />
       </Layout>
       <MapView />
+      <MapActions/>
       <Toaster />
     </EventProvider>
   )

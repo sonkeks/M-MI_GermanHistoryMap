@@ -3,6 +3,8 @@ import naturalEarthImage from '@/assets/NaturalEarth.png';
 import satelliteImage from '@/assets/Satellite.png';
 import {pointStringToLatLngTuple} from "@/services/EventsService.ts";
 import type {LatLngTuple} from "leaflet";
+import {getDateFormat, parseDate} from "@/utility/dateHelper.ts";
+import {capitalizeFirst} from "@/utility/stringHelpers.ts";
 
 export type EventLocation = {
   event: {
@@ -62,8 +64,9 @@ export type EventDto = {
   eventLabel: string;
   eventDescription?: string;
   eventImage?: string;
-  startDate?: string;
-  endDate?: string;
+  startDate?: Date;
+  endDate?: Date;
+  displayDate: string;
   image?: string;
   locations: {
     locationId: string,
@@ -83,21 +86,25 @@ export function groupEventLocations(data: EventLocation[]): EventDto[] {
       if (!grouped[id]) {
         grouped[id] = {
           eventId: id,
-          eventLabel: item.eventLabel.value,
-          eventDescription: item.eventDescription ? item.eventDescription.value : "",
+          eventLabel: capitalizeFirst(item.eventLabel ? item.eventLabel.value : undefined),
+          eventDescription: capitalizeFirst(item.eventDescription ? item.eventDescription.value : undefined),
           eventImage: item.eventImage && item.eventImage.type === "uri" ? item.eventImage.value : undefined,
-          startDate: item.startDate ? item.startDate.value : undefined,
-          endDate: item.endDate ? item.endDate.value : undefined,
+          startDate: parseDate(item.startDate ? item.startDate.value : undefined),
+          endDate: parseDate(item.endDate ? item.endDate.value : undefined),
+          displayDate: getDateFormat(
+            item.startDate ? item.startDate.value : undefined,
+            item.endDate ? item.endDate.value : undefined
+          ),
           image: item.image && item.image.type === "uri" ? item.image.value : undefined,
           locations: [],
         };
       }
       
-      // Only add location if coordinate or locationLabel exists
+      // Only add location if coordinate exists
       if (item.coordinate?.value && grouped[id] && !seenLocations.has(item.locationId.value)) {
         grouped[id].locations.push({
           locationId: item.locationId.value,
-          locationLabel: item.locationLabel?.value,
+          locationLabel: capitalizeFirst(item.locationLabel ? item.locationLabel.value : undefined),
           coordinate: pointStringToLatLngTuple(item.coordinate.value),
           image: item.image?.value,
         });
@@ -122,6 +129,7 @@ export type HistoricCollection = {
   title: string,
   description: string,
   startDate: Date,
+  endDate: Date,
   historicEvents: HistoricEvent['id'][],
   wikiTitle: string,
 }

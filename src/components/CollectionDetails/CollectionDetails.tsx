@@ -9,9 +9,8 @@ import {
   Timeline,
   Button,
   HoverCard,
-  Image,
   Portal,
-  Card, Skeleton, IconButton
+  Skeleton
 } from "@chakra-ui/react";
 import {type FunctionComponent, useContext, useEffect, useRef} from "react";
 import {Link, useParams} from "react-router-dom";
@@ -22,15 +21,15 @@ import {
   TbChevronUp,
   TbGitCommit,
   TbInfoCircle,
-  TbMapPin
 } from "react-icons/tb";
 import {MapContext} from "@/components/MapContext.tsx";
 import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
 import "./CollectionDetails.css";
-import {getDateFormat} from "@/utility/dateHelper.ts";
-import {getSeededColor} from "@/utility/colorHelper.ts";
 import {useGetEvents} from "@/hooks/useGetEvents.ts";
 import {historicCollections} from "@/components/data.ts";
+import type {EventDto} from "@/components/types.ts";
+import {TimelineItem} from "@/components/CollectionDetails/TimelineItem.tsx";
+import {EventCard} from "@/components/CollectionDetails/EventCard.tsx";
 
 export const CollectionDetails: FunctionComponent = () => {
   const { collectionId } = useParams();
@@ -58,6 +57,26 @@ export const CollectionDetails: FunctionComponent = () => {
     return state.sortOrder === 'ASC' ? (index + 1) : (state.events.length - index);
   }
   
+  const isHighlighted = (eventDto: EventDto) => {
+    const eventLocationIds = eventDto.locations.map(location => location.locationId);
+    return eventLocationIds.every(locationId => state.highlightedLocations.includes(locationId));
+  }
+  
+  const toggleHighlight = (eventDto: EventDto) => {
+    isHighlighted(eventDto)
+      ? dispatch({type: 'CLEAR_HIGHLIGHTS'})
+      : dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: eventDto.eventId, all: true}});
+  }
+  
+  const getSortButton = () => {
+    return (
+      <Button variant="ghost" onClick={() => dispatch({type: 'TOGGLE_SORT_ORDER'})}>
+        {state.sortOrder === 'ASC' ? 'Chronological' : 'Most Recent'}
+        {state.sortOrder === 'ASC' ? <TbChevronDown /> :  <TbChevronUp />}
+      </Button>
+    )
+  }
+  
   if (!collectionId) {
     return;
   }
@@ -70,7 +89,7 @@ export const CollectionDetails: FunctionComponent = () => {
           Collections
         </Link>
         <ChakraLink onClick={scrollToSection}>
-          Go to Events
+          Timeline
           <TbChevronDown size={20} />
         </ChakraLink>
       </Flex>
@@ -121,8 +140,7 @@ export const CollectionDetails: FunctionComponent = () => {
                       <Stack gap="2">
                         <Heading fontSize="sm">How to Use</Heading>
                         <Text fontSize="xs">
-                          Hover over an event to highlight its markers on the map.
-                          Clicking on an event shows you all it's locations.
+                          Click an event to highlight or unhighlight it on the map.
                         </Text>
                       </Stack>
                     </HoverCard.Content>
@@ -131,35 +149,11 @@ export const CollectionDetails: FunctionComponent = () => {
               </HoverCard.Root>
               <Heading fontSize="md">Timeline</Heading>
             </Flex>
-            <Button variant="ghost" onClick={() => dispatch({type: 'TOGGLE_SORT_ORDER'})}>
-              {state.sortOrder === 'ASC' ? 'Chronological' : 'Most Recent'}
-              {state.sortOrder === 'ASC' ? <TbChevronDown /> :  <TbChevronUp />}
-            </Button>
+            {getSortButton()}
           </Flex>
           <Timeline.Root>
             {state.events.map((eventData, index) => (
-              <Timeline.Item id={eventData.eventId + "-timeline"} key={eventData.eventId}>
-                <Timeline.Connector>
-                  <Timeline.Separator />
-                  <Timeline.Indicator style={{backgroundColor: getSeededColor(getStepNumber(index), state.events.length)}}>
-                    {getStepNumber(index)}
-                  </Timeline.Indicator>
-                </Timeline.Connector>
-                <Timeline.Content>
-                  <Flex justifyContent="space-between" alignItems="start">
-                    <Box>
-                      <Timeline.Title>{eventData.eventLabel}</Timeline.Title>
-                      <Timeline.Description>{getDateFormat(eventData.startDate, eventData.endDate)}</Timeline.Description>
-                    </Box>
-                    <IconButton variant="ghost" onClick={() => dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: eventData.eventId, all: true}})}>
-                      <TbMapPin />
-                    </IconButton>
-                  </Flex>
-                  <Text textStyle="sm">
-                    {eventData.eventDescription}
-                  </Text>
-                </Timeline.Content>
-              </Timeline.Item>
+              <TimelineItem key={eventData.eventId} event={eventData} stepNumber={getStepNumber(index)} isHighlighted={isHighlighted(eventData)} toggleHighlight={toggleHighlight}/>
             ))}
           </Timeline.Root>
         </Tabs.Content>
@@ -186,32 +180,11 @@ export const CollectionDetails: FunctionComponent = () => {
               </HoverCard.Root>
               <Heading fontSize="md">Event List</Heading>
             </Flex>
-            <Button variant="ghost" onClick={() => dispatch({type: 'TOGGLE_SORT_ORDER'})}>
-              {state.sortOrder === 'ASC' ? 'Chronological' : 'Most Recent'}
-              {state.sortOrder === 'ASC' ? <TbChevronDown /> :  <TbChevronUp />}
-            </Button>
+            {getSortButton()}
           </Flex>
           <Flex flexDirection="column" gap={3}>
-          {state.events.map(eventData => (
-            <Card.Root id={eventData.eventId + "-card"} key={eventData.eventId} overflow="hidden">
-              {eventData.eventImage && <Image
-                objectFit="cover"
-                maxH="200px"
-                src={eventData.eventImage + '?width=500'}
-                alt={`Image of ${eventData.eventLabel}`}
-              />}
-              <Card.Body gap="2">
-                <Card.Title mt="2">{eventData.eventLabel}</Card.Title>
-                <Card.Description>
-                  {eventData.eventDescription}
-                </Card.Description>
-              </Card.Body>
-              <Card.Footer justifyContent="end">
-                <Button variant="outline" onClick={() => dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: eventData.eventId, all: true}})}>
-                  Show on Map
-                </Button>
-              </Card.Footer>
-            </Card.Root>
+          {state.events.map((eventData, index) => (
+            <EventCard key={eventData.eventId} event={eventData} stepNumber={getStepNumber(index)} isHighlighted={isHighlighted(eventData)} toggleHighlight={toggleHighlight} />
           ))}
           </Flex>
         </Tabs.Content>

@@ -1,6 +1,5 @@
 import type {EventDto, HistoricCollection, HistoricEvent, MapStyleKey, SortOrder} from "@/components/types.ts";
 import {historicCollections, historicEvents} from "@/components/data.ts";
-import {getSortableDate} from "@/utility/dateHelper.ts";
 
 export type MapAction =
   | { type: "SELECT_MAPSTYLE"; payload: { key: MapStyleKey }}
@@ -14,12 +13,13 @@ export type MapAction =
   | { type: "CLEAR_DISPLAYED_EVENTS"}
   | { type: "TOGGLE_SORT_ORDER"}
   | { type: "HIGHLIGHT_LOCATIONS", payload: {eventId: string, all: boolean, locations?: string[]}}
+  | { type: "CLEAR_HIGHLIGHTS"}
 
 export type MapState = {
   mapStyle: MapStyleKey,
   currentSearchQuery: string;
-  selectedEvent: HistoricEvent | null;
-  selectedCollection: HistoricCollection | null;
+  selectedEvent: HistoricEvent | undefined;
+  selectedCollection: HistoricCollection | undefined;
   isLoadingEvents: boolean,
   events: EventDto[];
   sortOrder: SortOrder,
@@ -29,8 +29,8 @@ export type MapState = {
 export const initialMapState: MapState = {
   mapStyle: 'satellite',
   currentSearchQuery: '',
-  selectedEvent: null,
-  selectedCollection: null,
+  selectedEvent: undefined,
+  selectedCollection: undefined,
   isLoadingEvents: false,
   events: [],
   sortOrder: "ASC",
@@ -39,8 +39,8 @@ export const initialMapState: MapState = {
 
 function sortEvents(eventsToSort: EventDto[], sortOrder: SortOrder){
   return [...eventsToSort].sort((a, b) => {
-    const dateA = getSortableDate(a.startDate, a.endDate);
-    const dateB = getSortableDate(b.startDate, b.endDate);
+    const dateA = a.startDate || a.endDate;
+    const dateB = b.startDate || b.endDate;
     
     if (!dateA && !dateB) return 0;
     if (!dateA) return 1;
@@ -57,18 +57,18 @@ export function mapReducer(state: MapState, action: MapAction): MapState {
       return { ...state, mapStyle: action.payload.key }
     }
     case "SELECT_EVENT": {
-      const selectedEvent = historicEvents.find(item => item.id === action.payload.eventId) || null;
+      const selectedEvent = historicEvents.find(item => item.id === action.payload.eventId);
       return { ...state, selectedEvent: selectedEvent, highlightedLocations: [] };
     }
     case "CLEAR_EVENT": {
-      return {...state, selectedEvent: null, highlightedLocations: []};
+      return {...state, selectedEvent: undefined, events: [], highlightedLocations: []};
     }
     case "SELECT_COLLECTION": {
-      const selectedCollection = historicCollections.find(collection => collection.id === action.payload.collectionId) || null;
+      const selectedCollection = historicCollections.find(collection => collection.id === action.payload.collectionId);
       return { ...state, selectedCollection: selectedCollection, highlightedLocations: []}
     }
     case "CLEAR_COLLECTION": {
-      return { ...state, selectedCollection: null, highlightedLocations: []};
+      return { ...state, selectedCollection: undefined, events: [], highlightedLocations: []};
     }
     case 'SET_SEARCH_QUERY': {
       return {...state, currentSearchQuery: action.payload};
@@ -106,6 +106,9 @@ export function mapReducer(state: MapState, action: MapAction): MapState {
           : state;
       }
       return state;
+    }
+    case 'CLEAR_HIGHLIGHTS': {
+      return { ...state, highlightedLocations: []}
     }
     default:
       return state;

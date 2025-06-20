@@ -10,22 +10,12 @@ export function getDateFormat(startDate?: string, endDate?: string): string {
   if (parsedEndDate) {
     return parsedEndDate.toLocaleDateString();
   }
-  return "Unknown";
+  return "n.d.";
 }
 
 export function parseDate(date?: string): Date | undefined {
   if (date && !isNaN(Date.parse(date))) {
     return new Date(date);
-  }
-  return undefined;
-}
-
-export function getSortableDate(startDate?: string, endDate?: string): Date | undefined {
-  if (startDate && !isNaN(Date.parse(startDate))) {
-    return new Date(startDate);
-  }
-  if (endDate && !isNaN(Date.parse(endDate))) {
-    return new Date(endDate);
   }
   return undefined;
 }

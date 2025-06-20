@@ -51,20 +51,24 @@ export const EventDetails: FunctionComponent = () => {
       return;
     }
     
+    const handleListItemClick = (locationId: string) => {
+      state.highlightedLocations.includes(locationId)
+      ? dispatch({type: 'CLEAR_HIGHLIGHTS'})
+      : dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: state.events[0].eventId, all: false, locations: [locationId]}});
+    }
+    
     return (
       <Table.Root size="md" interactive>
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader>Location</Table.ColumnHeader>
-            <Table.ColumnHeader>Date</Table.ColumnHeader>
             <Table.ColumnHeader className="icon-cell"></Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {state.events[0].locations.map((location, index) => (
-            <Table.Row {...(state.highlightedLocations.includes(location.locationId) && { "data-selected": "true" })} className="events-table-row" key={location.locationId + "-listItem-" + index} onClick={() => dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: state.events[0].eventId, all: false, locations: [location.locationId]}})}>
+            <Table.Row {...(state.highlightedLocations.includes(location.locationId) && { "data-selected": "true" })} className="events-table-row" key={location.locationId + "-listItem-" + index} onClick={() => handleListItemClick(location.locationId)}>
               <Table.Cell>{location.locationLabel}</Table.Cell>
-              <Table.Cell>{state.events[0].endDate ? new Date(state.events[0].endDate).toLocaleDateString() : "n.d."}</Table.Cell>
               <Table.Cell className="icon-cell">
                 <TbChevronRight />
               </Table.Cell>
@@ -95,6 +99,13 @@ export const EventDetails: FunctionComponent = () => {
           <img className="header-image" src={details?.thumbnail?.source} alt={`Image of ${details?.title}`}/>
           <Stack className="container">
             <Heading>{details?.title}</Heading>
+            {state.isLoadingEvents ? (
+              <Skeleton height={5} width={40} />
+            ) : state.events.length > 0 ? (
+              <Text fontSize={14} color="gray.500" fontWeight="bold">
+                {state.events[0].displayDate}
+              </Text>
+            ) : null}
             <Text textStyle="sm">{details?.extract}</Text>
           </Stack>
         </>

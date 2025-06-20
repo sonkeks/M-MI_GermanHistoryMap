@@ -1,5 +1,5 @@
 import {type FunctionComponent, useEffect, useState} from "react";
-import {Button, Card, Flex} from "@chakra-ui/react";
+import {Button, Card, Flex, Text} from "@chakra-ui/react";
 import "./Collections.css";
 import {useSearch} from "@/hooks/useSearch.ts";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -29,8 +29,11 @@ export const Collections: FunctionComponent = () => {
     <Flex className="container" gap="3" direction="column">
       {collections.map(collection =>
         <Card.Root key={collection.id}>
-          <Card.Body gap="2">
+          <Card.Body>
             <Card.Title mt="2">{collection.title}</Card.Title>
+            <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={4}>
+              {collection.startDate.toLocaleDateString()} - {collection.endDate.toLocaleDateString()}
+            </Text>
             <Card.Description>
               {collection.description}
             </Card.Description>

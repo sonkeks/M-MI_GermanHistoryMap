@@ -20,7 +20,7 @@ export function useSearch() {
   }, [searchParams]);
   
   const buildPath = (destination: string) => {
-    return `/${destination}?q=${searchValue}`;
+    return `/${destination}?q=${encodeURIComponent(searchValue)}`;
   }
   
   const onFocus = () => {

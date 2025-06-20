@@ -5,6 +5,7 @@ export const historicCollections: HistoricCollection[] = [
     id: "wwi",
     title: "World War I",
     startDate: new Date(1914, 6, 28),
+    endDate: new Date('1918-11-11'),
     description: "Fought from 1914 to 1918, it involved major world powers and introduced modern warfare. Sparked by political alliances and assassinations, it ended with the fall of empires.",
     historicEvents: [
       "wd:Q192050",
@@ -26,6 +27,7 @@ export const historicCollections: HistoricCollection[] = [
     id: "wwii",
     title: "World War II",
     startDate: new Date(1939, 8, 1),
+    endDate: new Date('1945-09-02'),
     description: "A global war from 1939 to 1945, led by the rise of fascism and Nazi aggression. It reshaped the world order and ended with the defeat of the Axis and the atomic bomb.",
     historicEvents: [
       "wd:Q3927614",
@@ -47,6 +49,7 @@ export const historicCollections: HistoricCollection[] = [
     id: "cold-war",
     title: "Cold War",
     startDate: new Date(1947, 2, 12),
+    endDate: new Date('1991-12-26'),
     description: "A global power struggle between the U.S. and USSR after World War II. Marked by nuclear tension, proxy wars, and a race for ideological dominance.",
     historicEvents: [
       "wd:Q151349",
@@ -66,6 +69,7 @@ export const historicCollections: HistoricCollection[] = [
     id: "french-revolution",
     title: "French Revolution",
     startDate: new Date(1789, 4, 5),
+    endDate: new Date('1799-11-09'),
     description: "A period of radical political and social upheaval in France beginning in 1789. It ended the monarchy, inspired democratic ideals, and reshaped European history.",
     historicEvents: [
       "wd:Q60022",
@@ -82,6 +86,7 @@ export const historicCollections: HistoricCollection[] = [
     id: "napoleonic-wars",
     title: "Napoleonic Wars",
     startDate: new Date(1803, 4, 18),
+    endDate: new Date('1815-06-18'),
     description: "A series of wars led by Napoleon Bonaparte that reshaped Europe through battles across the continent.",
     historicEvents: [
       "wd:Q171416",
@@ -101,6 +106,7 @@ export const historicCollections: HistoricCollection[] = [
     id: "roman-empire",
     title: "Roman Empire",
     startDate: new Date(-27, 0, 16),
+    endDate: new Date('476-09-04'),
     description: "An ancient empire centered around the Mediterranean, known for its military, engineering, and legal legacy.",
     historicEvents: [
       "wd:Q87779",

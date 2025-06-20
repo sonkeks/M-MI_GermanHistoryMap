@@ -30,13 +30,20 @@ export const Events: FunctionComponent = () => {
   
   return (
     <Box>
-      <Table.Root size="md" interactive>
+      <Table.Root size="md" interactive stickyHeader>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Event</Table.ColumnHeader>
+            <Table.ColumnHeader>Year</Table.ColumnHeader>
+            <Table.ColumnHeader className="icon-cell"></Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
        <Table.Body>
          {events.map(historicEvent => (
            <Table.Row className="events-table-row" key={historicEvent.id} onClick={() => handleEventSelect(historicEvent.id)}>
              <Table.Cell>{historicEvent.label}</Table.Cell>
              <Table.Cell>{historicEvent.year}</Table.Cell>
-             <Table.Cell>
+             <Table.Cell className="icon-cell">
                <TbChevronRight />
              </Table.Cell>
            </Table.Row>
