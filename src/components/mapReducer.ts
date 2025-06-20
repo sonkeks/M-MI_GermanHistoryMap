@@ -27,7 +27,7 @@ export type MapState = {
 }
 
 export const initialMapState: MapState = {
-  mapStyle: 'satellite',
+  mapStyle: 'openStreetMap',
   currentSearchQuery: '',
   selectedEvent: undefined,
   selectedCollection: undefined,
