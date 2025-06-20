@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import type {LatLngTuple} from "leaflet";
 import {MapContext} from "@/components/MapContext.tsx";
 import {useContext, useMemo} from "react";
-import {Box, Heading, Stack, Text} from "@chakra-ui/react";
+import {Box, Button, Flex, Heading, Stack, Text} from "@chakra-ui/react";
 import "./Mapview.css";
 import {MAP_STYLES} from './types';
 import {CustomMarker} from "@/components/CustomMarker.tsx";
@@ -13,7 +13,7 @@ import FitBounds from "@/components/FitBounds.tsx";
 
 
 const MapView = () => {
-  const {state} = useContext(MapContext);
+  const {state, dispatch} = useContext(MapContext);
   
   const center: LatLngTuple = [51.1657, 10.4515];
   const zoom = 6;
@@ -33,7 +33,8 @@ const MapView = () => {
         ...location,
         eventId: eventData.eventId,
         eventLabel: eventData.eventLabel,
-        eventDescription: eventData.eventDescription
+        eventDescription: eventData.eventDescription,
+        eventDisplayDate: eventData.displayDate,
       }))
   )
   
@@ -57,6 +58,12 @@ const MapView = () => {
       return undefined;
     }
     return state.highlightedLocations.includes(locationId);
+  }
+  
+  const toggleHighlight = (eventId: string, locationId: string) => {
+    getIsHighlighted(locationId)
+      ? dispatch({type: 'CLEAR_HIGHLIGHTS'})
+      : dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: eventId, all: true}});
   }
   
   return (
@@ -88,8 +95,16 @@ const MapView = () => {
               }
               <Box className="popup-location-info-container">
                 <Heading mt="0" lineHeight="1" size="md">{location.locationLabel}</Heading>
-                <Text m="0!" color="gray.500" fontWeight="500">{location.eventLabel}</Text>
+                <Flex alignItems="center" justifyContent="space-between">
+                  <Text m="0!" color="gray.500" fontWeight="500">{location.eventLabel}</Text>
+                  <Text m="0!" color="gray.500" fontWeight="500">{location.eventDisplayDate}</Text>
+                </Flex>
                 <Text mt="2!" textStyle="sm">{location.eventDescription}</Text>
+                <Flex justifyContent="end">
+                  <Button variant='outline' onClick={() => toggleHighlight(location.eventId, location.locationId)}>
+                    {getIsHighlighted(location.locationId) ? "Clear Highlight" : "Highlight Event"}
+                  </Button>
+                </Flex>
               </Box>
             </Stack>
           </Popup>

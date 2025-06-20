@@ -11,12 +11,14 @@
 .custom-popup > div > .leaflet-popup-content {
     border: none !important;
     margin: 0 !important;
+    min-width: 250px;
 }
 
 .image-container {
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     width: 100%;
+    min-width: 250px;
     height: 300px;
     object-fit: cover;
     background-color: #c4c4c5;
