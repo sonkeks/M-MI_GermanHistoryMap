@@ -1,5 +1,5 @@
-import {type FunctionComponent, useContext, useEffect, useState} from "react";
-import {Box, Flex, Input, InputGroup, Tabs} from "@chakra-ui/react";
+import {type FunctionComponent, useContext, useEffect, useRef, useState} from "react";
+import {Box, CloseButton, Flex, Input, InputGroup, Tabs} from "@chakra-ui/react";
 import {TbBooks, TbCalendarMonth, TbSearch} from "react-icons/tb";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import "./SearchLayout.css";
@@ -14,6 +14,7 @@ export const SearchLayout: FunctionComponent = () => {
   const [category, setCategory] = useState<Category>('COLLECTIONS');
   const navigate = useNavigate();
   const location = useLocation();
+  const searchRef = useRef<HTMLInputElement | null>(null)
   
   useEffect(() => {
     const pathname = location.pathname;
@@ -50,10 +51,22 @@ export const SearchLayout: FunctionComponent = () => {
     }
   }
   
+  const closeButton = searchValue ? (
+    <CloseButton
+      size="xs"
+      onClick={() => {
+        setSearchValue("");
+        searchRef.current?.focus();
+      }}
+      me="2"
+    />
+  ) : undefined
+  
   return (
     <Flex direction="column" height="100vh">
-      <InputGroup startElement={<TbSearch size={16} />} w="full" className="search-bar">
+      <InputGroup startElement={<TbSearch size={16} />} endElement={closeButton} w="full" className="search-bar">
         <Input
+          ref={searchRef}
           flex="1"
           size="lg"
           placeholder={getPlaceholder()}
