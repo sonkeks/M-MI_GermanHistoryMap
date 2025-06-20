@@ -11,7 +11,6 @@ import {getSeededColor} from "@/utility/colorHelper.ts";
 import {TbPhotoOff} from "react-icons/tb";
 import FitBounds from "@/components/FitBounds.tsx";
 
-
 const MapView = () => {
   const {state, dispatch} = useContext(MapContext);
   
@@ -47,7 +46,7 @@ const MapView = () => {
   
   const getColor = (eventId: string) => {
     if (state.events.length === 1) {
-      return '#000000';
+      return getSeededColor(0, state.events.length);
     }
     const stepNumber = getStepNumber(eventId);
     return getSeededColor(stepNumber, state.events.length);
