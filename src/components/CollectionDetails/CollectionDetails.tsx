@@ -11,11 +11,19 @@ import {
   HoverCard,
   Image,
   Portal,
-  Card, Skeleton
+  Card, Skeleton, IconButton
 } from "@chakra-ui/react";
 import {type FunctionComponent, useContext, useEffect, useRef} from "react";
 import {Link, useParams} from "react-router-dom";
-import {TbCarouselVertical, TbChevronDown, TbChevronLeft, TbChevronUp, TbGitCommit, TbInfoCircle} from "react-icons/tb";
+import {
+  TbCarouselVertical,
+  TbChevronDown,
+  TbChevronLeft,
+  TbChevronUp,
+  TbGitCommit,
+  TbInfoCircle,
+  TbMapPin
+} from "react-icons/tb";
 import {MapContext} from "@/components/MapContext.tsx";
 import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
 import "./CollectionDetails.css";
@@ -130,7 +138,7 @@ export const CollectionDetails: FunctionComponent = () => {
           </Flex>
           <Timeline.Root>
             {state.events.map((eventData, index) => (
-              <Timeline.Item key={eventData.eventId}>
+              <Timeline.Item id={eventData.eventId + "-timeline"} key={eventData.eventId}>
                 <Timeline.Connector>
                   <Timeline.Separator />
                   <Timeline.Indicator style={{backgroundColor: getSeededColor(getStepNumber(index), state.events.length)}}>
@@ -138,8 +146,15 @@ export const CollectionDetails: FunctionComponent = () => {
                   </Timeline.Indicator>
                 </Timeline.Connector>
                 <Timeline.Content>
-                  <Timeline.Title>{eventData.eventLabel}</Timeline.Title>
-                  <Timeline.Description>{getDateFormat(eventData.startDate, eventData.endDate)}</Timeline.Description>
+                  <Flex justifyContent="space-between" alignItems="start">
+                    <Box>
+                      <Timeline.Title>{eventData.eventLabel}</Timeline.Title>
+                      <Timeline.Description>{getDateFormat(eventData.startDate, eventData.endDate)}</Timeline.Description>
+                    </Box>
+                    <IconButton variant="ghost" onClick={() => dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: eventData.eventId, all: true}})}>
+                      <TbMapPin />
+                    </IconButton>
+                  </Flex>
                   <Text textStyle="sm">
                     {eventData.eventDescription}
                   </Text>
@@ -178,7 +193,7 @@ export const CollectionDetails: FunctionComponent = () => {
           </Flex>
           <Flex flexDirection="column" gap={3}>
           {state.events.map(eventData => (
-            <Card.Root key={eventData.eventId} overflow="hidden">
+            <Card.Root id={eventData.eventId + "-card"} key={eventData.eventId} overflow="hidden">
               {eventData.eventImage && <Image
                 objectFit="cover"
                 maxH="200px"
@@ -192,7 +207,7 @@ export const CollectionDetails: FunctionComponent = () => {
                 </Card.Description>
               </Card.Body>
               <Card.Footer justifyContent="end">
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: eventData.eventId, all: true}})}>
                   Show on Map
                 </Button>
               </Card.Footer>

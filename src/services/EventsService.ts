@@ -7,7 +7,8 @@ function buildDetailsQuery(ids: HistoricEvent['id'][]): string {
   return `
     SELECT ?event (CONCAT("wd:", REPLACE(STR(?event), "^.*Q", "Q")) AS ?eventId) ?eventLabel ?eventDescription
            ?startDate ?endDate
-           ?location ?locationLabel ?coordinate ?image
+           ?location (CONCAT("wd:", REPLACE(STR(?location), "^.*Q", "Q")) AS ?locationId)
+           ?locationLabel ?coordinate ?image
            ?eventArticle ?eventImage
     WHERE {
       VALUES ?event { ${values} }

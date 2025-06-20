@@ -13,6 +13,7 @@ export type MapAction =
   | { type: "UPDATE_DISPLAYED_EVENTS"; payload: {sortOrder: SortOrder, events: EventDto[]} }
   | { type: "CLEAR_DISPLAYED_EVENTS"}
   | { type: "TOGGLE_SORT_ORDER"}
+  | { type: "HIGHLIGHT_LOCATIONS", payload: {eventId: string, all: boolean, locations?: string[]}}
 
 export type MapState = {
   mapStyle: MapStyleKey,
@@ -22,6 +23,7 @@ export type MapState = {
   isLoadingEvents: boolean,
   events: EventDto[];
   sortOrder: SortOrder,
+  highlightedLocations: string[],
 }
 
 export const initialMapState: MapState = {
@@ -32,6 +34,7 @@ export const initialMapState: MapState = {
   isLoadingEvents: false,
   events: [],
   sortOrder: "ASC",
+  highlightedLocations: []
 };
 
 function sortEvents(eventsToSort: EventDto[], sortOrder: SortOrder){
@@ -55,17 +58,17 @@ export function mapReducer(state: MapState, action: MapAction): MapState {
     }
     case "SELECT_EVENT": {
       const selectedEvent = historicEvents.find(item => item.id === action.payload.eventId) || null;
-      return { ...state, selectedEvent: selectedEvent };
+      return { ...state, selectedEvent: selectedEvent, highlightedLocations: [] };
     }
     case "CLEAR_EVENT": {
-      return {...state, selectedEvent: null};
+      return {...state, selectedEvent: null, highlightedLocations: []};
     }
     case "SELECT_COLLECTION": {
       const selectedCollection = historicCollections.find(collection => collection.id === action.payload.collectionId) || null;
-      return { ...state, selectedCollection: selectedCollection}
+      return { ...state, selectedCollection: selectedCollection, highlightedLocations: []}
     }
     case "CLEAR_COLLECTION": {
-      return { ...state, selectedCollection: null};
+      return { ...state, selectedCollection: null, highlightedLocations: []};
     }
     case 'SET_SEARCH_QUERY': {
       return {...state, currentSearchQuery: action.payload};
@@ -84,6 +87,25 @@ export function mapReducer(state: MapState, action: MapAction): MapState {
       const newSortOrder: SortOrder = state.sortOrder === 'ASC' ? 'DESC' : 'ASC'
       const sortedEvents = sortEvents(state.events, newSortOrder);
       return { ...state, sortOrder: newSortOrder, events: sortedEvents }
+    }
+    case 'HIGHLIGHT_LOCATIONS': {
+      const event = state.events.find(event => event.eventId === action.payload.eventId);
+      if (!event) {
+        return state;
+      }
+      if (action.payload.all) {
+        return { ...state, highlightedLocations: event.locations.map(location => location.locationId)}
+      }
+      if (action.payload.locations) {
+        const eventLocationIds = event.locations.map(location => location.locationId);
+        const areValidLocations = action.payload.locations.every(
+          locationId => eventLocationIds.includes(locationId)
+        );
+        return areValidLocations
+          ? { ...state, highlightedLocations: action.payload.locations }
+          : state;
+      }
+      return state;
     }
     default:
       return state;

@@ -26,7 +26,7 @@ const MapView = () => {
     return map;
   }, [state.events, state.sortOrder]);
   
-  const structuredEvents = state.events.flatMap(eventData =>
+  const structuredLocation = state.events.flatMap(eventData =>
     eventData.locations
       .filter(location => location.coordinate)
       .map(location => ({
@@ -37,9 +37,10 @@ const MapView = () => {
       }))
   )
   
-  const latLngs: LatLngTuple[] = structuredEvents
-    .map(e => e.coordinate)
-    .filter((c): c is LatLngTuple => !!c);
+  const latLngs: LatLngTuple[] = structuredLocation
+    .filter(event => state.highlightedLocations.length !== 0 ? state.highlightedLocations.includes(event.locationId) : true)
+    .map(event => event.coordinate)
+    .filter((coordinate): coordinate is LatLngTuple => !!coordinate);
   
   const getStepNumber = (eventId: string) => eventIdToStepMap[eventId] || 0;
   
@@ -51,6 +52,13 @@ const MapView = () => {
     return getSeededColor(stepNumber, state.events.length);
   }
   
+  const getIsHighlighted = (locationId: string) => {
+    if (state.highlightedLocations.length === 0) {
+      return undefined;
+    }
+    return state.highlightedLocations.includes(locationId);
+  }
+  
   return (
     <MapContainer zoomControl={false} center={center} zoom={zoom} style={{ height: '100vh', width: '100%' }}>
       <TileLayer
@@ -58,8 +66,14 @@ const MapView = () => {
         attribution={MAP_STYLES[state.mapStyle].attribution}
       />
       <ZoomControl position='bottomright' />
-      {state.events && !state.isLoadingEvents && structuredEvents.map((location, index) => (
-        <CustomMarker key={location.eventId + index} number={state.events.length > 1 ? getStepNumber(location.eventId) : undefined} color={getColor(location.eventId)} position={location.coordinate}>
+      {state.events && !state.isLoadingEvents && structuredLocation.map((location, index) => (
+        <CustomMarker
+          key={location.eventId + index}
+          number={state.events.length > 1 ? getStepNumber(location.eventId) : undefined}
+          color={getColor(location.eventId)}
+          position={location.coordinate}
+          isHighlighted={getIsHighlighted(location.locationId)}
+        >
           <Popup className="custom-popup">
             <Stack>
               {location.image

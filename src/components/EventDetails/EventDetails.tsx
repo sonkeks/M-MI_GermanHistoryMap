@@ -62,7 +62,7 @@ export const EventDetails: FunctionComponent = () => {
         </Table.Header>
         <Table.Body>
           {state.events[0].locations.map((location, index) => (
-            <Table.Row className="events-table-row" key={index}>
+            <Table.Row {...(state.highlightedLocations.includes(location.locationId) && { "data-selected": "true" })} className="events-table-row" key={location.locationId + "-listItem-" + index} onClick={() => dispatch({type: 'HIGHLIGHT_LOCATIONS', payload: {eventId: state.events[0].eventId, all: false, locations: [location.locationId]}})}>
               <Table.Cell>{location.locationLabel}</Table.Cell>
               <Table.Cell>{state.events[0].endDate ? new Date(state.events[0].endDate).toLocaleDateString() : "n.d."}</Table.Cell>
               <Table.Cell className="icon-cell">

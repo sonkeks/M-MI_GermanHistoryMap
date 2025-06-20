@@ -46,6 +46,10 @@ export type EventLocation = {
     type: string,
     value: string
   }
+  locationId: {
+    type: string,
+    value: string,
+  };
   locationLabel: {
     "xml:lang": string;
     type: "literal";
@@ -62,6 +66,7 @@ export type EventDto = {
   endDate?: string;
   image?: string;
   locations: {
+    locationId: string,
     locationLabel?: string;
     coordinate: LatLngTuple;
     image?: string;
@@ -73,6 +78,7 @@ export function groupEventLocations(data: EventLocation[]): EventDto[] {
   
   for (const item of data) {
     const id = item.eventId.value;
+    const seenLocations = new Set<string>();
     try {
       if (!grouped[id]) {
         grouped[id] = {
@@ -88,8 +94,9 @@ export function groupEventLocations(data: EventLocation[]): EventDto[] {
       }
       
       // Only add location if coordinate or locationLabel exists
-      if (item.coordinate?.value) {
+      if (item.coordinate?.value && grouped[id] && !seenLocations.has(item.locationId.value)) {
         grouped[id].locations.push({
+          locationId: item.locationId.value,
           locationLabel: item.locationLabel?.value,
           coordinate: pointStringToLatLngTuple(item.coordinate.value),
           image: item.image?.value,
