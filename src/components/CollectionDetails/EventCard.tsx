@@ -4,6 +4,7 @@ import type {EventDto} from "@/components/types.ts";
 import {Button, Card, Image, Text} from "@chakra-ui/react";
 import {getSeededColor} from "@/utility/colorHelper.ts";
 import {TbMapPin} from "react-icons/tb";
+import {useLocation, useNavigate} from "react-router-dom";
 
 interface EventCardProps {
   event: EventDto,
@@ -14,6 +15,8 @@ interface EventCardProps {
 
 export const EventCard: FunctionComponent<EventCardProps> = ({event, stepNumber, isHighlighted, toggleHighlight}) => {
   const {state} = useContext(MapContext);
+  const navigate = useNavigate();
+  const location = useLocation();
   
   return (
     <Card.Root id={event.eventId + "-card"} overflow="hidden">
@@ -23,7 +26,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({event, stepNumber,
           src={event.eventImage + '?width=500'}
           alt={`Image of ${event.eventLabel}`}
       />}
-      <Card.Body>
+      <Card.Body pb={4}>
         <Card.Title>
           {event.eventLabel}
         </Card.Title>
@@ -33,11 +36,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({event, stepNumber,
         <Card.Description>
           {event.eventDescription}
         </Card.Description>
-      </Card.Body>
-      <Card.Footer justifyContent="space-between">
-        <Text fontSize="sm" color="gray.500">
+        <Text mt={2} fontSize="sm" color="gray.500">
           {`${event.locations.length} Location${event.locations.length > 1 ? 's' : ''}`}
         </Text>
+      </Card.Body>
+      <Card.Footer justifyContent="space-between">
+        <Button variant="outline" onClick={() => navigate(`collectionEvents/${event.eventId}${location.search}`)}>
+          Details
+        </Button>
         <Button
           variant="ghost"
           style={isHighlighted ? { color: getSeededColor(stepNumber, state.events.length)} : {}}

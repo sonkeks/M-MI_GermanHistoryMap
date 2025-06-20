@@ -1,9 +1,10 @@
 import {type FunctionComponent, useContext} from "react";
 import {ActionBar, Button} from "@chakra-ui/react";
 import {MapContext} from "@/components/MapContext.tsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 export const MapActions: FunctionComponent = () => {
+  const {collectionId} = useParams();
   const {state, dispatch} = useContext(MapContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,6 +24,9 @@ export const MapActions: FunctionComponent = () => {
       dispatch({type: 'CLEAR_EVENT'});
       if (location.pathname.includes('events')) {
         navigate(`/events${query}`);
+      }
+      if (location.pathname.includes('collectionEvents')) {
+        navigate(`/collections/${collectionId}${query}`)
       }
     } else if (state.selectedCollection) {
       dispatch({type: 'CLEAR_COLLECTION'})

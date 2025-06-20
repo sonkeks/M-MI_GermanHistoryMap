@@ -2,7 +2,7 @@ import {type FunctionComponent, useContext, useEffect, useState} from "react";
 import {Box, Flex, IconButton, Image, Text, Portal, Link, Heading, Dialog, CloseButton, Stack} from "@chakra-ui/react";
 import "./SideMenu.css";
 import {TbExternalLink, TbInfoSmall, TbMenu2} from "react-icons/tb";
-import { Content } from "./Content/Content";
+import { Content } from "../Content/Content.tsx";
 import {Outlet} from "react-router-dom";
 import {MapContext} from "@/components/MapContext.tsx";
 import {MAP_STYLES} from "@/components/types.ts";

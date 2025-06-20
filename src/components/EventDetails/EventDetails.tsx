@@ -6,9 +6,10 @@ import {MapContext} from "@/components/MapContext.tsx";
 import {TbChevronLeft, TbChevronRight, TbExternalLink} from "react-icons/tb";
 import {useGetWikiDetails} from "@/hooks/useGetWikiDetails.ts";
 import {useGetEvents} from "@/hooks/useGetEvents.ts";
+import {historicCollections} from "@/components/data.ts";
 
 export const EventDetails: FunctionComponent = () => {
-  const { eventId } = useParams();
+  const { eventId, collectionId } = useParams();
   const { state, dispatch } = useContext(MapContext);
   const location = useLocation();
   const { details, loading: loadingWikiDetails } = useGetWikiDetails(eventId!, 'EVENT');
@@ -79,13 +80,22 @@ export const EventDetails: FunctionComponent = () => {
     )
   }
   
+  const getBackLink = () => {
+    const isCollectionEvent = location.pathname.includes("collectionEvents");
+    const currentCollection = historicCollections.find(collection => collection.id === collectionId);
+    const url = isCollectionEvent && currentCollection ? `/collections/${collectionId}${location.search}` : `/events${location.search}`;
+    return (
+      <Link to={url} replace className="back-link" onClick={() => dispatch({type: 'CLEAR_EVENT'})}>
+        <TbChevronLeft size={20}/>
+        {isCollectionEvent && currentCollection ? currentCollection.title : "Events"}
+      </Link>
+    )
+  }
+  
   return (
     <Box>
       <Flex className="event-navigation-bar" alignItems="center" justifyContent="space-between">
-        <Link to={`/events${location.search}`} replace className="back-link" onClick={() => dispatch({type: 'CLEAR_EVENT'})}>
-          <TbChevronLeft size={20}/>
-          Events
-        </Link>
+        {getBackLink()}
         {details?.content_urls && (
           <ChakraLink href={details.content_urls.desktop.page} target="_blank">
             Read More

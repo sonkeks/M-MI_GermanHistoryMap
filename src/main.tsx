@@ -10,6 +10,7 @@ import {SearchLayout} from "@/components/SearchLayout/SearchLayout.tsx";
 import {Events} from "@/components/Events/Events.tsx";
 import {Collections} from "@/components/Collections/Collections.tsx";
 import {CollectionDetails} from "@/components/CollectionDetails/CollectionDetails.tsx";
+import {RedirectToCollection} from "@/components/RedirectToCollection.tsx";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -23,6 +24,8 @@ createRoot(document.getElementById('root')!).render(
               <Route path="events/:eventId" element={<EventDetails />}/>
               <Route path="collections" element={<Collections />} />
               <Route path="collections/:collectionId" element={<CollectionDetails />} />
+              <Route path="collections/:collectionId/collectionEvents" element={<RedirectToCollection />} />
+              <Route path="collections/:collectionId/collectionEvents/:eventId" element={<EventDetails />} />
             </Route>
           </Route>
         </Routes>
