@@ -13,7 +13,10 @@ export const SideMenu: FunctionComponent = () => {
   const { state, dispatch } = useContext(MapContext);
   
   useEffect(() => {
-    setTimeout(() => setIsOpen(true), 300);
+    const isMobile = window.innerWidth <= 500;
+    if (!isMobile) {
+      setTimeout(() => setIsOpen(true), 300);
+    }
   }, []);
   
   const toggleMenu = () => {
