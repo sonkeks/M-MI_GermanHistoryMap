@@ -11,10 +11,10 @@ export const MapActions: FunctionComponent = () => {
   
   const getSelectionText = () => {
     if (state.highlightedLocations.length > 0) {
-      return `${state.highlightedLocations.length} Location${state.highlightedLocations.length > 1 ? "s" : ""} Highlighted`
+      return `${state.highlightedLocations.length} Location${state.highlightedLocations.length > 1 ? "s" : ""}`
     } else {
       const totalLocations = state.events.reduce((sum, event) => sum + event.locations.length, 0);
-      return `${totalLocations} Location${totalLocations > 1 ? "s" : ""} Selected`
+      return `${totalLocations} Location${totalLocations > 1 ? "s" : ""}`
     }
   }
   

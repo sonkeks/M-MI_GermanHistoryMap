@@ -14,7 +14,7 @@ import {RedirectToCollection} from "@/components/RedirectToCollection.tsx";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Provider>
+    <Provider forcedTheme={'light'}>
       <HashRouter>
         <Routes>
           <Route path="/" element={<App />}>

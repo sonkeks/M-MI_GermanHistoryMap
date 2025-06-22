@@ -63,7 +63,7 @@ export const SearchLayout: FunctionComponent = () => {
   ) : undefined
   
   return (
-    <Flex direction="column" height="100vh">
+    <Flex className="search-container" direction="column" height="100vh">
       <InputGroup startElement={<TbSearch size={16} />} endElement={closeButton} w="full" className="search-bar">
         <Input
           ref={searchRef}

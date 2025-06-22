@@ -27,11 +27,11 @@ export const SideMenu: FunctionComponent = () => {
           <Outlet />
         </Content>
       </Box>
-      <Flex gap="4" direction="column" alignItems="center" className="side-menu-container" justifyContent="space-between">
+      <Flex gap="4" alignItems="center" className="side-menu-container" justifyContent="space-between">
         <IconButton colorPalette="gray" variant="outline" size="lg" onClick={toggleMenu}>
           <TbMenu2 />
         </IconButton>
-        <Flex gap={3} direction="column" className="inner-flex-container">
+        <Flex gap={3} className="inner-flex-container">
           {Object.entries(MAP_STYLES).map(([key, style]) => (
             <Box className="map-image-container" key={key}>
               <Image className={["map-style-image", state.mapStyle === key ? "map-selected" : ""].join(" ")} src={style.image} onClick={() => dispatch({type: "SELECT_MAPSTYLE", payload: {key: key}})} />

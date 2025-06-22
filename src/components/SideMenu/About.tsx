@@ -54,7 +54,7 @@ export const About: FunctionComponent = () => {
                 <Text fontSize="xs">Sönke Schaarschmidt</Text>
                 <Text fontSize="xs">Stockholmer Straße 1.</Text>
                 <Text fontSize="xs">13359, Berlin</Text>
-                <Text fontSize="xs">Germany</Text>
+                <Text fontSize="xs">Deutschland</Text>
                 <Text fontSize="xs">Email: soenke.schaarschmidt@gmail.com</Text>
               </Stack>
             </Dialog.Body>
